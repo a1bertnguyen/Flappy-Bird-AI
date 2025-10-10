@@ -42,6 +42,15 @@ public class Matrix4f {
 		return result;
 	}
 	
+	
+	 // ✅ Thêm hàm translate với 3 float
+    public static Matrix4f translate(float x, float y, float z) {
+        return translate(new Vector3f(x, y, z));
+    }
+
+   
+  
+	
 	public static Matrix4f translate(Vector3f vector) {
 		Matrix4f result = identity();
 		result.elements[0 + 3 * 4] = vector.x;
@@ -49,6 +58,18 @@ public class Matrix4f {
 		result.elements[2 + 3 * 4] = vector.z;
 		return result;
 	}
+	
+	
+	// ✅ Thêm hàm scale
+    public static Matrix4f scale(float x, float y, float z) {
+        Matrix4f result = identity();
+        result.elements[0 + 0 * 4] = x;
+        result.elements[1 + 1 * 4] = y;
+        result.elements[2 + 2 * 4] = z;
+        return result;
+    }
+    
+    
 	
 	public static Matrix4f rotate(float angle) {
 		Matrix4f result = identity();

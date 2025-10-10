@@ -35,7 +35,7 @@ public class Pipe implements GameObject{
 			1, 1
 		};
 		
-		mesh = new VertexArray(vertices, indices, tcs);
+		mesh = new VertexArray(vertices, tcs, indices);
 		texture = TextureLoader.load("res/pipe.png");		
 	}
 	

@@ -5,16 +5,18 @@ layout (location = 1) in vec2 tc;
 
 uniform mat4 pr_matrix;
 uniform mat4 vw_matrix;
+uniform mat4 ml_matrix;   // ✅ thêm model matrix để MenuScreen dùng
 
 out DATA
 {
-	vec2 tc;
-	vec3 position;
+    vec2 tc;
+    vec3 position;
 } vs_out;
 
 void main()
 {
-	gl_Position = pr_matrix * vw_matrix * position;
-	vs_out.tc = tc;
-	vs_out.position = vec3(vw_matrix * position);
+    // ✅ thêm ml_matrix vào chuỗi biến đổi
+    gl_Position = pr_matrix * vw_matrix * ml_matrix * position;
+    vs_out.tc = tc;
+    vs_out.position = vec3(vw_matrix * ml_matrix * position);
 }

@@ -22,7 +22,10 @@ public class BirdRenderer {
 	        byte[] indices = { 0,1,2, 2,3,0 };
 	        float[] tcs = { 0,1, 0,0, 1,0, 1,1 };
 
-	        mesh = new VertexArray(vertices, indices, tcs);
+//	        mesh = new VertexArray(vertices, indices, tcs);
+	        
+	        mesh = new VertexArray(vertices, tcs ,indices);
+	        
 	        texture = TextureLoader.load("res/bird.png");
 	    }
 
