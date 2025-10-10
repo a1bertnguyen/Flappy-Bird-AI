@@ -103,6 +103,7 @@
 package flappy.main;
 
 import static org.lwjgl.glfw.GLFW.*;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -232,9 +233,7 @@ public class GameLogic implements IGameLogic {
         } else {
             level.update();
             input.update();
-            if (level.isGameOver()) {
-                level = new Level();
-            }
+
         }
              
         

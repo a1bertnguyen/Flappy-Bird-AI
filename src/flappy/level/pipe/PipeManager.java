@@ -13,7 +13,32 @@ public class PipeManager {
     private int index = 0;
     private float OFFSET = 5.0f;
     private Random random = new Random();
+  
+    
+    //--------------------------------------------
+    
+ // ✅ dùng để lưu pipe cuối cùng đã được vượt qua (tránh cộng điểm nhiều lần)
+    private int lastPassedPipe = -1;
+    
+ // ✅ Hàm mới để phát hiện khi chim vượt qua ống
+    public boolean checkPass(Bird bird, int xScroll) {
+        float bx = -xScroll * 0.05f; // vị trí x hiện tại của chim
 
+        for (int i = 0; i < pipes.length; i += 2) { // chỉ kiểm tra ống trên
+            float pipeX = pipes[i].getX();
+
+            // nếu chim vừa bay qua mép phải của ống (pipeX + width)
+            if (bx > pipeX + Pipe.getWidth() && i != lastPassedPipe) {
+                lastPassedPipe = i;
+                return true; // báo cho Level biết để cộng điểm và phát âm thanh
+            }
+        }
+        return false;
+    }
+    
+    //---------------------------------
+    
+    
     public PipeManager() {
         Pipe.create();
         createPipes();
