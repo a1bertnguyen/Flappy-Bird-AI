@@ -83,76 +83,59 @@ public class Level {
 	        	);   
 	    }
 
+	    
 	    public void update() {
-	        if (control) {
-	            xScroll--;
-	            if (-xScroll % 335 == 0) background.nextMap();
-	            if (-xScroll > 250 && -xScroll % 120 == 0)
-	                pipeManager.updatePipes();
-	        }
+	        switch (state) {
+	            case PLAYING -> {
+	                xScroll--;
+	                if (-xScroll % 335 == 0) background.nextMap();
+	                if (-xScroll > 250 && -xScroll % 120 == 0)
+	                    pipeManager.updatePipes();
 
-	        bird.update(); // cập nhật vị trí chim
+	                bird.update();
 
-	        // ✅ Kiểm tra Game Over: chim rơi hoặc va chạm
-	        if (bird.getY() < -5.625f || bird.getY() > 5.625f || pipeManager.checkCollision(bird, xScroll)) {
-	            control = false;    // ngừng di chuyển background và pipes
-	            gameOver = true;    // bật trạng thái game over
-	            bird.fall();        // chim rơi xuống (nếu va chạm)
-	        }
+	                // Kiểm tra va chạm hoặc rơi
+	                if (bird.getY() < -5.625f || bird.getY() > 5.625f || pipeManager.checkCollision(bird, xScroll)) {
+	                    control = false;
+	                    state = GameState.GAMEOVER;
+	                    bird.fall();
+	                }
+	            }
 
-	        // Nhấn Space để reset game
-	        if (gameOver && input.isKeyDown(GLFW_KEY_SPACE)) {
-	            reset = true;
+	            case GAMEOVER -> {
+	                // Chờ nhấn SPACE để reset
+	                if (input.isKeyDown(GLFW_KEY_SPACE)) {
+	                    resetGame();
+	                    state = GameState.PLAYING;
+	                }
+	            }
 	        }
 	    }
 
-// cái dưới còn quan trọng	    
-//	    public void update() {
-//	        if (control) {
-//	            xScroll--;
-//	            if (-xScroll % 335 == 0) background.nextMap();
-//	            if (-xScroll > 250 && -xScroll % 120 == 0)
-//	                pipeManager.updatePipes();
-//	        }
-//
-//	        bird.update();// cập ngật vị trí chim
-//	        
-//	        // Chim rơi ngoài màn hình
-//	        if (bird.getY() < -5.625f || bird.getY() > 5.625f) {
-//	            control = false;
-//	            gameOver = true;
-//	        }
-//	        
-//	        // Chim va chạm cột
-//	        if (control && pipeManager.checkCollision(bird, xScroll)) {
-//	            bird.fall();
-//	            control = false;
-//	            gameOver = true;
-//	        }
-//
-//	        if (!control && input.isKeyDown(GLFW_KEY_SPACE))
-//	            reset = true;
-//	    }
+	    
+	    private void resetGame() {
+	        bird = new Bird();
+	        birdRenderer = new BirdRenderer();
+	        pipeManager = new PipeManager();
+	        background = new Background();
+	        xScroll = 0;
+	        control = true;
+	    }
 
-	   
+
 	    
 	    public void render() {
-	    	
-	    	System.out.println("Rendering Level...");
-	    	
-	    	background.render(bird.getY(), xScroll);
+	        background.render(bird.getY(), xScroll);
 	        pipeManager.render(bird.getY(), xScroll);
 	        birdRenderer.render(bird);
-	        
-	        if (gameOver) {
+
+	        if (state == GameState.GAMEOVER) {
 	            renderGameOver();
 	        }
-	  	    }
+	    }
 
-//	    public boolean isGameOver() {
-//	        return reset;
-//	    }
-	    
+
+
 	    public boolean isGameOver() {
 	        return gameOver;
 	    }
@@ -178,12 +161,15 @@ public class Level {
 	            new byte[]{0,1,2, 2,3,0}
 	        );
 
-	        Matrix4f model = Matrix4f.translate(screenWidth/2f - gameOverTexture.getWidth()/2f,
-	                                            screenHeight/2f - gameOverTexture.getHeight()/2f,
-	                                            0)
-	                            .multiply(Matrix4f.scale(gameOverTexture.getWidth(),
-	                                                     gameOverTexture.getHeight(),
-	                                                     1));
+
+	        
+	        Matrix4f model = Matrix4f.translate(
+	                screenWidth / 2f - gameOverTexture.getWidth() / 2f,
+	                screenHeight / 2f + gameOverTexture.getHeight() / 2f, // cộng thay vì trừ
+	                0
+	        ).multiply(Matrix4f.scale(gameOverTexture.getWidth(), -gameOverTexture.getHeight(), 1)); // <== lật Y
+
+	        
 
 	        ShaderManager.UI.setUniformMat4f("ml_matrix", model);
 	        ShaderManager.UI.setUniformMat4f("pr_matrix", Matrix4f.orthographic(0, screenWidth, 0, screenHeight, -1,1));
