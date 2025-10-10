@@ -1,6 +1,5 @@
 package score;
 
-
 import flappy.graphics.Texture.Texture;
 import flappy.graphics.Texture.TextureLoader;
 import flappy.graphics.VertexArray.VertexArray;
@@ -73,7 +72,7 @@ public class ScoreManager {
             int d = s.charAt(i) - '0';
             digits[d].bind();
             Matrix4f model = Matrix4f.translate(x + i * (digitWidth + 4), y, 0)
-                    .multiply(Matrix4f.scale(digitWidth, digitWidth, 1));
+                    .multiply(Matrix4f.scale(digitWidth,- digitWidth, 1));
             ShaderManager.UI.setUniformMat4f("ml_matrix", model);
             Renderer.draw(vao);
             digits[d].unbind();

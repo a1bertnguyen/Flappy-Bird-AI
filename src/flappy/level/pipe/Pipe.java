@@ -15,6 +15,16 @@ public class Pipe implements GameObject{
 	private static Texture texture;
 	private static VertexArray mesh;
 	
+	private boolean passed = false;
+	
+	public boolean isPassed() { 
+		       return passed; 
+		       }
+	
+	public void setPassed(boolean passed) { 
+		      this.passed = passed; 
+		      }
+	
 	public static void create() {
 		float[] vertices = new float[] {
 			0.0f, 0.0f, 0.1f,
