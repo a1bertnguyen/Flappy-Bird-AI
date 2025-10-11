@@ -1,0 +1,15 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/lwjgl.jar",
+        "lib/lwjgl-glfw.jar",
+        "lib/lwjgl-opengl.jar",
+        "lib/lwjgl-natives-windows.jar",
+        "lib/lwjgl-glfw-natives-windows.jar",
+        "lib/lwjgl-opengl-natives-windows.jar"
+    ],
+    "java.debug.settings.vmArgs": "-Djava.library.path=lib"
+}

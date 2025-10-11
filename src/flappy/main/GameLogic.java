@@ -67,7 +67,7 @@ public class GameLogic implements IGameLogic {
 		ShaderManager.PIPE.setUniformMat4f("pr_matrix", pr_matrix);
 		ShaderManager.PIPE.setUniform1i("tex", 1);
 		
-		level = new Level();
+		level = new Level(100);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class GameLogic implements IGameLogic {
 		level.update();
 		input.update();
 		if (level.isGameOver()) {
-			level = new Level();
+			level = new Level(100);
 		}
     }
 

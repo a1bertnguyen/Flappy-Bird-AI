@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "flappy.main.Main",
+            "projectName": "DSAproject"
+        },
+        {
+            "type": "java",
+            "name": "Launch Flappy Bird",
+            "request": "launch",
+            "mainClass": "flappy.main.Main",
+            "projectName": "Flappy-Bird-AI",
+            "classPaths": [
+                "bin",
+                "lib/lwjgl.jar",
+                "lib/lwjgl-glfw.jar",
+                "lib/lwjgl-opengl.jar",
+                "lib/lwjgl-natives-windows.jar",
+                "lib/lwjgl-glfw-natives-windows.jar",
+                "lib/lwjgl-opengl-natives-windows.jar"
+            ],
+            "sourcePaths": [
+                "src"
+            ],
+            "vmArgs": "-Djava.library.path=lib",
+            "console": "integratedTerminal"
+        }
+    ]
+}

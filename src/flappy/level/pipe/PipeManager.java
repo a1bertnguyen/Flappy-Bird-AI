@@ -9,7 +9,7 @@ import flappy.maths.Vector3f;
 import flappy.level.bird.Bird;
 
 public class PipeManager {
-	private Pipe[] pipes = new Pipe[10];
+    private Pipe[] pipes = new Pipe[10];
     private int index = 0;
     private float OFFSET = 5.0f;
     private Random random = new Random();
@@ -34,15 +34,15 @@ public class PipeManager {
     }
 
     public void render(float birdY, int xScroll) {
-    	ShaderManager.PIPE.enable();
-    	ShaderManager.PIPE.setUniform2f("bird", 0, birdY);
-    	ShaderManager.PIPE.setUniformMat4f("vw_matrix", Matrix4f.translate(new Vector3f(xScroll * 0.05f, 0.0f, 0.0f)));
+        ShaderManager.PIPE.enable();
+        ShaderManager.PIPE.setUniform2f("bird", 0, birdY);
+        ShaderManager.PIPE.setUniformMat4f("vw_matrix", Matrix4f.translate(new Vector3f(xScroll * 0.05f, 0.0f, 0.0f)));
         Pipe.getTexture().bind();
         Pipe.getMesh().bind();
 
         for (int i = 0; i < 10; i++) {
-        	ShaderManager.PIPE.setUniformMat4f("ml_matrix", pipes[i].getModelMatrix());
-        	ShaderManager.PIPE.setUniform1i("top", i % 2 == 0 ? 1 : 0);
+            ShaderManager.PIPE.setUniformMat4f("ml_matrix", pipes[i].getModelMatrix());
+            ShaderManager.PIPE.setUniform1i("top", i % 2 == 0 ? 1 : 0);
             Renderer.draw(Pipe.getMesh());
         }
 
