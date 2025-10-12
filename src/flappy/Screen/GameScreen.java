@@ -20,7 +20,7 @@ public class GameScreen implements IScreen{
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			System.out.println("OpenGL: " + glGetString(GL_VERSION));
-			ShaderManager.loadAll();
+			
 			
 			Matrix4f pr_matrix = Matrix4f.orthographic(-10.0f, 10.0f, -10.0f * 9.0f / 16.0f, 10.0f * 9.0f / 16.0f, -1.0f, 1.0f);
 			ShaderManager.BG.setUniformMat4f("pr_matrix", pr_matrix);

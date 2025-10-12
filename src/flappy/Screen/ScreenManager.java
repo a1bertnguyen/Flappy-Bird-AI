@@ -1,4 +1,6 @@
 package flappy.Screen;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class ScreenManager {
 	   private static IScreen currentScreen;
@@ -14,12 +16,13 @@ public class ScreenManager {
 	           currentScreen.dispose();
 	       }
 	       switch (screenID) {
-//	           case MENU -> currentScreen = new MenuScreen();
+	           case MENU -> currentScreen = new MenuScreen();
 	           case GAME -> currentScreen = new GameScreen();
 	           case SKIN -> currentScreen = new SkinScreen();
 //	            case LEVEL -> currentScreen = new LevelScreen();
 	       }
 	       currentScreen.init();
+	       
 	   }
 	   public static void update() {
 	       if (currentScreen != null)

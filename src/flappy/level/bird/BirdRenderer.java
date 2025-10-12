@@ -13,6 +13,7 @@ public class BirdRenderer {
 	    private Texture texture;
 	    private Texture[] skins;
 
+
 	    public BirdRenderer() {
 	        float SIZE = 1.0f;
 	        float[] vertices = { 
@@ -30,6 +31,7 @@ public class BirdRenderer {
 	                TextureLoader.load("res/skin-doggogo.png"),
 	                TextureLoader.load("res/skin-redbird.png")};
 	        texture = skins[ScreenManager.getSelectedSkin()];
+
 	    }
 
 	    public void render(Bird bird) {

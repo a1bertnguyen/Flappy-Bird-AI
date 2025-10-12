@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="C:/Users/taman/Downloads/lwjgl/lwjgl-opengl/lwjgl-opengl-natives-windows.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taman/Downloads/lwjgl/lwjgl/lwjgl-natives-windows.jar"/>
 	<classpathentry kind="lib" path="C:/Users/taman/Downloads/lwjgl/lwjgl-glfw/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taman/Downloads/lwjgl/lwjgl-stb/lwjgl-stb.jar"/>
+	<classpathentry kind="lib" path="C:/Users/taman/Downloads/lwjgl/lwjgl-stb/lwjgl-stb-natives-windows.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

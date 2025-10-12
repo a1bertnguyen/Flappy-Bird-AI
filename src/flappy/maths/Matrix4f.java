@@ -50,6 +50,10 @@ public class Matrix4f {
 		return result;
 	}
 	
+	public static Matrix4f translate(float x, float y, float z) {
+        return translate(new Vector3f(x, y, z));
+    }
+	
 	public static Matrix4f rotate(float angle) {
 		Matrix4f result = identity();
 		float r = (float) Math.toRadians(angle);
@@ -78,6 +82,14 @@ public class Matrix4f {
 		}
 		return result;
 	}
+	
+	 public static Matrix4f scale(float x, float y, float z) {
+	        Matrix4f result = identity();
+	        result.elements[0 + 0 * 4] = x;
+	        result.elements[1 + 1 * 4] = y;
+	        result.elements[2 + 2 * 4] = z;
+	        return result;
+	    }
 	
 	public FloatBuffer toFloatBuffer() {
 		return BufferUtils.createFloatBuffer(elements);

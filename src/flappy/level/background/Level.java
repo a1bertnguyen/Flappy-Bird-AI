@@ -36,6 +36,7 @@ public class Level {
 	        background = new Background();
 	        fade=new VertexArray(6);
 	        background.init();
+
 	    }
 
 	    public void update() {

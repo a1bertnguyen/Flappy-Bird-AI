@@ -8,8 +8,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-
 import flappy.Screen.ScreenManager;
+import flappy.graphics.Shader.ShaderManager;
 import flappy.input.input;
 
 
@@ -17,7 +17,7 @@ public class GameLogic implements IGameLogic {
 
     private int width = 1280;
     private int height = 720;
-    private long window;
+    public static long window;
 
     @Override
     public void init() {
@@ -44,6 +44,8 @@ public class GameLogic implements IGameLogic {
 
         // --- 3. Callback bàn phím ---
         glfwSetKeyCallback(window, new input());
+        glfwSetCursorPosCallback(window, input.cursorPosCallback);
+        glfwSetMouseButtonCallback(window, input.mouseButtonCallback);
 
         // --- 4. Context & OpenGL ---
         glfwMakeContextCurrent(window);
@@ -51,7 +53,8 @@ public class GameLogic implements IGameLogic {
         GL.createCapabilities();
 
         // --- 5. Gọi màn hình đầu tiên ---
-        ScreenManager.changeScreen(ScreenManager.SKIN);
+        ShaderManager.loadAll();
+        ScreenManager.changeScreen(ScreenManager.MENU);
         // nếu có menu: ScreenManager.changeScreen(ScreenManager.MENU);
     }
 
