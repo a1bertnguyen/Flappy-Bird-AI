@@ -52,7 +52,7 @@ public class Bird implements Updateable{
     	return SIZE; 
     	}
     
- // ✅ Hàm gọi khi người chơi nhấn SPACE
+ //  Hàm gọi khi người chơi nhấn SPACE
     public void flap() {
         delta = -0.15f; // bay lên
     }

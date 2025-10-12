@@ -229,75 +229,6 @@ public class Level {
 
     public void update() {
         switch (state) {
-//            case PLAYING -> {
-//                xScroll--;
-//                if (-xScroll % 335 == 0) background.nextMap();
-//                if (-xScroll > 250 && -xScroll % 120 == 0)
-//                    pipeManager.updatePipes();
-//
-//                bird.update();
-//
-//                // 🎯 Khi người chơi nhấn SPACE để bay lên
-//                if (input.isKeyPressed(GLFW_KEY_SPACE)) {
-//                    SoundManager.playFlap(); // 🔊 âm flap.wav khi nhấn phím
-//                }
-//
-//                // 🎯 Khi chim bay qua ống -> cộng điểm + ting.wav
-//                if (pipeManager.checkPass(bird, xScroll)) {
-//                    scoreManager.addScore();
-//                    SoundManager.playTing(); // 🔊 ting.wav khi ghi điểm
-//                }
-//
-//                // 💥 Kiểm tra va chạm hoặc rơi
-//                if (bird.getY() < -5.625f || bird.getY() > 5.625f || pipeManager.checkCollision(bird, xScroll)) {
-//                    control = false;
-//                    state = GameState.GAMEOVER;
-//                    bird.fall();
-//
-//                    gameOverWait = 30; // đợi ~0.5 giây nếu 60fps
-//
-//                    // 🔊 phát âm thanh game over
-//                    SoundManager.stopBackground();
-//                    SoundManager.playGameOver();
-//                }
-//            }
-        
-        // code case playing để khi nhấn space chim tạo âm thanh vỗ cánh
-        
-//        case PLAYING -> {
-//            // 🔹 Khi người chơi nhấn phím SPACE: chim bay lên + phát tiếng flap ngay lập tức
-//            if (input.isKeyPressed(GLFW_KEY_SPACE)) {
-//                bird.flap();              // chim bay lên
-//                SoundManager.playFlap();  // 🔊 phát flap.wav ngay
-//            }
-//
-//            xScroll--;
-//            if (-xScroll % 335 == 0) background.nextMap();
-//            if (-xScroll > 250 && -xScroll % 120 == 0)
-//                pipeManager.updatePipes();
-//
-//            bird.update();
-//
-//            // 🎯 Khi chim bay qua ống -> cộng điểm + ting.wav
-//            if (pipeManager.checkPass(bird, xScroll)) {
-//                scoreManager.addScore();
-//                SoundManager.playTing(); // 🔊 ting.wav khi ghi điểm
-//            }
-//
-//            // 💥 Kiểm tra va chạm hoặc rơi
-//            if (bird.getY() < -5.625f || bird.getY() > 5.625f || pipeManager.checkCollision(bird, xScroll)) {
-//                control = false;
-//                state = GameState.GAMEOVER;
-//                bird.fall();
-//
-//                gameOverWait = 30; // đợi ~0.5 giây nếu 60fps
-//
-//                // 🔊 phát âm thanh game over
-//                SoundManager.stopBackground();
-//                SoundManager.playGameOver();
-//            }
-//        }
-
 
         
         // casepplaying ver2
@@ -345,6 +276,9 @@ public class Level {
                 } else if (input.isKeyDown(GLFW_KEY_SPACE)) {
                     resetGame();
                     state = GameState.PLAYING;
+                    
+                    // 🛑 Dừng nhạc game over nếu còn đang phát
+                    SoundManager.stopGameOver();
 
                     // 🔊 chơi lại nhạc nền khi restart
                     SoundManager.playBackground();
@@ -375,12 +309,12 @@ public class Level {
         }
     }
 
-    // ------------thêm vô để chạy sound và score
+    //thêm vô để chạy sound và score
     public boolean isGameOver() {
         return state == GameState.GAMEOVER;
     }
 
-    //--------------------
+ 
 
     private void renderGameOver() {
         glDisable(GL_DEPTH_TEST);
