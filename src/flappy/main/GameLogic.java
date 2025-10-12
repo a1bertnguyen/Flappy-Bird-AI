@@ -1,5 +1,3 @@
-
-
 package flappy.main;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -37,7 +35,6 @@ public class GameLogic implements IGameLogic {
     
     
     private GameState state = GameState.MENU; // hoặc GameState.PLAYING khi bắt đầu
-
 
     
     @Override     
@@ -133,7 +130,6 @@ public class GameLogic implements IGameLogic {
         } else {
             level.update();
             input.update();
-
         }
               
     }

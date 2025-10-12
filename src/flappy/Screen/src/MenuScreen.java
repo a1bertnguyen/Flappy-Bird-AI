@@ -145,8 +145,7 @@ public class MenuScreen {
         float bgScaleX = screenWidth;
         float bgScaleY = screenHeight;
 
-//        Matrix4f bgModel = Matrix4f.translate(0, 0, -0.5f)
-//                .multiply(Matrix4f.scale(bgScaleX, bgScaleY, 1));
+
         
         Matrix4f bgModel = Matrix4f.translate(0, screenHeight, -0.5f)
                 .multiply(Matrix4f.scale(bgScaleX, -bgScaleY, 1));
