@@ -298,7 +298,11 @@ public class Level {
     }
 
     public void render() {
-        background.render(bird.getY(), xScroll);
+    	
+//        background.render(bird.getY(), xScroll);
+        
+        background.render(bird.getX(), bird.getY(), xScroll);
+        
         pipeManager.render(bird.getY(), xScroll);
         birdRenderer.render(bird);
 

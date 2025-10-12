@@ -37,25 +37,52 @@ public class Background {
     }
 
 
-    
-    
-    //mới thêm vô
     public void nextMap() {
         map++;
     }
    
     
-    public void render(float birdY, int xScroll) {
-        glDisable(GL_DEPTH_TEST); // tắt depth test
+//    public void render(float birdY, int xScroll) {
+//        glDisable(GL_DEPTH_TEST); // tắt depth test
+//
+//        ShaderManager.BG.enable();
+//
+//        glActiveTexture(GL_TEXTURE0);
+//        bgTexture.bind();
+//        ShaderManager.BG.setUniform1i("tex", 0); // texture unit
+//        
+//        ShaderManager.BG.setUniform2f("bird", 0f, 0.5f); // tạm để background hiển thị
+//        ShaderManager.BG.setUniformMat4f("vw_matrix", Matrix4f.translate(new Vector3f(0,0,0)));
+//        ShaderManager.BG.setUniformMat4f("ml_matrix", Matrix4f.identity()); // quan trọng!
+//
+//        background.bind();
+//        Renderer.draw(background);
+//        background.unbind();
+//
+//        bgTexture.unbind();
+//        ShaderManager.BG.disable();
+//
+//        glEnable(GL_DEPTH_TEST); // bật lại depth test cho chim + pipe
+//    }
+    
+    
+    
+    // chỉnh lại hàm render để fix đóm sáng
+    
+    public void render(float birdX, float birdY, int xScroll) {
+        glDisable(GL_DEPTH_TEST);
 
         ShaderManager.BG.enable();
 
         glActiveTexture(GL_TEXTURE0);
         bgTexture.bind();
-        ShaderManager.BG.setUniform1i("tex", 0); // texture unit
-        ShaderManager.BG.setUniform2f("bird", 0f, 0.5f); // tạm để background hiển thị
+        ShaderManager.BG.setUniform1i("tex", 0);
+
+        // ✅ gửi vị trí thật của chim vào shader (hiệu ứng sáng đi theo chim)
+        ShaderManager.BG.setUniform2f("bird", birdX, birdY);
+
         ShaderManager.BG.setUniformMat4f("vw_matrix", Matrix4f.translate(new Vector3f(0,0,0)));
-        ShaderManager.BG.setUniformMat4f("ml_matrix", Matrix4f.identity()); // quan trọng!
+        ShaderManager.BG.setUniformMat4f("ml_matrix", Matrix4f.identity());
 
         background.bind();
         Renderer.draw(background);
@@ -64,7 +91,8 @@ public class Background {
         bgTexture.unbind();
         ShaderManager.BG.disable();
 
-        glEnable(GL_DEPTH_TEST); // bật lại depth test cho chim + pipe
+        glEnable(GL_DEPTH_TEST);
     }
+
     
 }
