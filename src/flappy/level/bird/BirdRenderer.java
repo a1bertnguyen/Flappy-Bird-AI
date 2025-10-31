@@ -1,5 +1,6 @@
 package flappy.level.bird;
 
+import flappy.Screen.ScreenManager;
 import flappy.graphics.Shader.ShaderManager;
 import flappy.graphics.Texture.Texture;
 import flappy.graphics.Texture.TextureLoader;
@@ -10,6 +11,8 @@ import flappy.maths.Matrix4f;
 public class BirdRenderer {
 	 private VertexArray mesh;
 	    private Texture texture;
+	    private Texture[] skins;
+
 
 	    public BirdRenderer() {
 	        float SIZE = 1.0f;
@@ -23,7 +26,12 @@ public class BirdRenderer {
 	        float[] tcs = { 0,1, 0,0, 1,0, 1,1 };
 
 	        mesh = new VertexArray(vertices, indices, tcs);
-	        texture = TextureLoader.load("res/bird.png");
+	        skins = new Texture[] {
+	                TextureLoader.load("res/bird.png"),
+	                TextureLoader.load("res/skin-doggogo.png"),
+	                TextureLoader.load("res/skin-redbird.png")};
+	        texture = skins[ScreenManager.getSelectedSkin()];
+
 	    }
 
 	    public void render(Bird bird) {

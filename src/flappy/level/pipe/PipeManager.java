@@ -13,11 +13,15 @@ public class PipeManager {
     private int index = 0;
     private float OFFSET = 5.0f;
     private Random random = new Random();
+    private int lastPassedPipe = -1;
+    private int gap=120;
 
-    public PipeManager() {
+    public PipeManager(int gap) {
+    	this.gap = gap;
         Pipe.create();
         createPipes();
     }
+
 
     private void createPipes() {
         for (int i = 0; i < 10; i += 2) {
@@ -72,4 +76,35 @@ public class PipeManager {
         }
         return false;
     }
+    
+    public boolean checkPass(Bird bird, int xScroll) {
+        float bx = -xScroll * 0.05f; // vị trí chim theo x
+
+        for (int i = 0; i < pipes.length; i += 2) { // chỉ kiểm tra ống trên
+            Pipe pipe = pipes[i];
+            float pipeX = pipe.getX();
+     
+            if (!pipe.isPassed() && bx > pipeX + Pipe.getWidth()) {                         	    
+  
+            	 pipe.setPassed(true); // đánh dấu đã vượt
+                return true;           // cộng điểm
+             }
+        }
+        return false;
+   }
+    
+    public void reset() {
+    	index = 0;
+        lastPassedPipe = -1;
+        // tạo lại danh sách pipes (không gọi Pipe.create())
+        for (int i = 0; i < pipes.length; i++) {
+            pipes[i] = null;
+        }
+        createPipes(); // hàm này sẽ dùng index = 0 để khởi tạo ban đầu
+        // reset flag passed nếu cần
+        for (int i = 0; i < pipes.length; i++) {
+            if (pipes[i] != null) pipes[i].setPassed(false);
+        }
+    }
+
 }

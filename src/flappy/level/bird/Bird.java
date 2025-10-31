@@ -31,6 +31,12 @@ public class Bird implements Updateable{
     public void fall() {
         delta = -0.1f;
     	}
+    
+    public void reset() {
+        position.y = 0;
+        delta = 0;
+        rot = 0;
+    }
 
     public float getY() {
 		return position.y;
@@ -51,4 +57,9 @@ public class Bird implements Updateable{
     public float getSize() { 
     	return SIZE; 
     	}
+    
+    public void flap() {
+        delta = -0.15f; // bay lên
+        rot = -delta * 90.0f;
+    }
 }
