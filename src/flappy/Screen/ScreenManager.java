@@ -10,7 +10,7 @@ public class ScreenManager {
 	   public static final int SKIN = 2;
 	   public static final int LEVEL = 3;
 	   private static int selectedSkin = 0;
-	   private static int selectedLevel = 0;
+	   private static Difficulty selectedLevel=Difficulty.EASY;
 	   public static void changeScreen(int screenID) {
 	       if (currentScreen != null) {
 	           currentScreen.dispose();
@@ -19,7 +19,7 @@ public class ScreenManager {
 	           case MENU -> currentScreen = new MenuScreen();
 	           case GAME -> currentScreen = new GameScreen();
 	           case SKIN -> currentScreen = new SkinScreen();
-//	            case LEVEL -> currentScreen = new LevelScreen();
+	           case LEVEL -> currentScreen = new LevelScreen();
 	       }
 	       currentScreen.init();
 	       
@@ -38,7 +38,7 @@ public class ScreenManager {
 	   // --- Dữ liệu chia sẻ ---
 	   public static int getSelectedSkin() { return selectedSkin; }
 	   public static void setSelectedSkin(int skin) { selectedSkin = skin; }
-	   public static int getSelectedLevel() { return selectedLevel; }
-	   public static void setSelectedLevel(int level) { selectedLevel = level; }
+	   public static Difficulty getSelectedLevel() { return selectedLevel; }
+	   public static void setSelectedLevel(Difficulty level) { selectedLevel = level; }
 	}
 

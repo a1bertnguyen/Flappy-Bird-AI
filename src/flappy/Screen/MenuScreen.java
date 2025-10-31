@@ -73,7 +73,7 @@ public class MenuScreen implements IScreen{
     	    shader = ShaderManager.UI;
     	    projection = Matrix4f.orthographic(0, w, 0, h, -1, 1);
 
-    	    FontUtils font = new FontUtils("res/font/Pacifico-Regular.ttf", 96f);
+    	    FontUtils font = new FontUtils("res/font/Pacifico-Regular.ttf", 72f);
     	    Texture bgTex = TextureLoader.load("res/button-background.png");
     	    int buttonW = 300;
     	    int buttonH = 120;
@@ -81,8 +81,11 @@ public class MenuScreen implements IScreen{
     	    float by = (h - buttonH) / 2f;
     	    Button playButton = new Button(bx, by-120, buttonW, buttonH, bgTex, "START", font);
     	    Button skinButton = new Button(bx, by, buttonW, buttonH, bgTex, "SKIN", font);
+    	    Button levelButton = new Button(bx, by+120, buttonW, buttonH, bgTex, "DIFFICULTY", font);
+    	    
     	    buttons.add(playButton);
     	    buttons.add(skinButton);
+    	    buttons.add(levelButton);
 
     	    bgVao = new VertexArray(
     	        new float[]{0f, 0f, 0f, 1f, 0f, 0f, 1f, 1f, 0f, 0f, 1f, 0f},
@@ -93,12 +96,11 @@ public class MenuScreen implements IScreen{
     @Override
     public void update() {
     	glfwPollEvents();
-        input.update();
         double mouseX = input.getMouseX();
         double mouseY = input.getMouseY();
         for (Button b : buttons) {
             if (b.isHovered((float) mouseX, (float) mouseY) &&
-                input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+                input.isMouseClicked(GLFW_MOUSE_BUTTON_LEFT)) {
             	String label = b.getLabel();
             	if (label.equals("START")) {
                     ScreenManager.changeScreen(ScreenManager.GAME);
@@ -106,8 +108,12 @@ public class MenuScreen implements IScreen{
             	if (label.equals("SKIN")) {
                     ScreenManager.changeScreen(ScreenManager.SKIN);
                 } 
+            	if (label.equals("DIFFICULTY")) {
+                    ScreenManager.changeScreen(ScreenManager.LEVEL);
+                } 
             }
         }
+        input.update();
 
     }
     @Override

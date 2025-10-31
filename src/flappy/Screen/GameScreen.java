@@ -31,7 +31,7 @@ public class GameScreen implements IScreen{
 			
 			ShaderManager.PIPE.setUniformMat4f("pr_matrix", pr_matrix);
 			ShaderManager.PIPE.setUniform1i("tex", 1);
-	        level = new Level();
+	        level = new Level(ScreenManager.getSelectedLevel());
 	    }
 	    @Override
 	    public void update() {
@@ -43,18 +43,16 @@ public class GameScreen implements IScreen{
 	            }
 	            return;
 	        }
-	       
+//	        input.update();
 	        level.update();
-	        if (level.isGameOver()) {
-	            level = new Level();
-	        }
+	        
 	       
-	        input.update();
 	    }
 	    @Override
 	    public void render() {
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	        level.render();
+	        
 	    }
 	    @Override
 	    public void dispose() {

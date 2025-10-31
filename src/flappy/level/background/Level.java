@@ -1,77 +1,186 @@
 package flappy.level.background;
 
-import java.util.Random;
-
-import flappy.graphics.VertexArray.Renderer;
-import flappy.graphics.Shader.Shader;
+import flappy.Screen.Difficulty;
+import flappy.Screen.ScreenManager;
+import flappy.audio.SoundManager;
 import flappy.graphics.Shader.ShaderManager;
 import flappy.graphics.Texture.Texture;
+import flappy.graphics.Texture.TextureLoader;
+import flappy.graphics.VertexArray.Renderer;
 import flappy.graphics.VertexArray.VertexArray;
 import flappy.input.input;
-import flappy.maths.Matrix4f;
-import flappy.maths.Vector3f;
 import flappy.level.bird.Bird;
 import flappy.level.bird.BirdRenderer;
 import flappy.level.pipe.PipeManager;
+import flappy.maths.Matrix4f;
+import flappy.score.ScoreManager;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Level {
 
-	 	private Bird bird;
-	 	private BirdRenderer birdRenderer;
-	    private PipeManager pipeManager;
-	    private Background background;
-	    private VertexArray fade;
+    private enum GameState { PLAYING, GAMEOVER }
 
-	    private int xScroll = 0;
-	    private boolean control = true, reset = false;
+    // Core game objects
+    private final Bird bird;
+    private final BirdRenderer birdRenderer;
+    private final PipeManager pipeManager;
+    private final Background background;
+    private final Difficulty difficulty;
+    private final ScoreManager scoreManager;
 
-	    private float time = 0.0f;
+    // Game Over UI
+    private final Texture gameOverTexture;
+    private final VertexArray gameOverVAO;
 
-	    public Level() {
-	        bird = new Bird();
-	        birdRenderer = new BirdRenderer();
-	        pipeManager = new PipeManager();
-	        background = new Background();
-	        fade=new VertexArray(6);
-	        background.init();
+    // Game logic
+    private int xScroll = 0;
+    private GameState state = GameState.PLAYING;
+    private boolean flapPressed = false;
+    private boolean canReset = false;
+    private int gameOverWait = 0;
+    private boolean justReset = false;
 
-	    }
+    public Level(Difficulty difficulty) {
+        this.difficulty = difficulty;
 
-	    public void update() {
-	        if (control) {
-	            xScroll--;
-	            if (-xScroll % 335 == 0) background.nextMap();
-	            if (-xScroll > 250 && -xScroll % 120 == 0)
-	                pipeManager.updatePipes();
-	        }
+        bird = new Bird();
+        birdRenderer = new BirdRenderer();
+        pipeManager = new PipeManager(difficulty.pipeGap);
+        background = new Background();
+        scoreManager = new ScoreManager();
 
-	        bird.update();
-	        
-	        if	(bird.getY() < -5.625f || bird.getY() > 5.625f) {
-	        	control=false;
-	        }
-	        
-	        if (control && pipeManager.checkCollision(bird, xScroll)) {
-	            bird.fall();
-	            control = false;
-	        }
+        background.init();
+        SoundManager.init();
+        SoundManager.playBackground();
 
-	        if (!control && input.isKeyDown(GLFW_KEY_SPACE))
-	            reset = true;
+        // Load Game Over texture & VAO (chỉ tạo 1 lần)
+        gameOverTexture = TextureLoader.load("res/gameover.png");
+        gameOverVAO = new VertexArray(
+                new float[]{0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0},
+                new byte[]{0, 1, 2, 2, 3, 0},
+                new float[]{0, 0, 1, 0, 1, 1, 0, 1}
+        );
+    }
 
-//	        background.update();
-	    }
+    public void update() {
+        glfwPollEvents();
 
-	    public void render() {
-	    	background.render(bird.getY(), xScroll);
-	        pipeManager.render(bird.getY(), xScroll);
-	        birdRenderer.render(bird);
-	  	    }
+        switch (state) {
+            case PLAYING -> updatePlaying();
+            case GAMEOVER -> updateGameOver();
+        }
 
-	    public boolean isGameOver() {
-	        return reset;
-	    }
-	
+        input.update();
+    }
+
+    private void updatePlaying() {
+        boolean spaceDown = input.isKeyDown(GLFW_KEY_SPACE);
+
+        if (spaceDown && !flapPressed) {
+            flapPressed = true;
+            bird.flap();
+            SoundManager.playFlap();
+        } else if (!spaceDown) {
+            flapPressed = false;
+        }
+
+        xScroll -= difficulty.speed;
+        if (-xScroll % difficulty.backgroundLength == 0) background.nextMap();
+        if (-xScroll > 250 && -xScroll % difficulty.pipeGap == 0) pipeManager.updatePipes();
+
+        bird.update();
+
+        if (pipeManager.checkPass(bird, xScroll)) {
+            scoreManager.addScore();
+            SoundManager.playTing();
+        }
+
+        // Kiểm tra va chạm
+        boolean outOfBounds = bird.getY() < -5.625f || bird.getY() > 5.625f;
+        boolean hitPipe = pipeManager.checkCollision(bird, xScroll);
+
+        if (outOfBounds || hitPipe) {
+            state = GameState.GAMEOVER;
+            gameOverWait = 8;
+            SoundManager.stopBackground();
+            SoundManager.playGameOver();
+        }
+    }
+
+    private void updateGameOver() {
+        bird.update(); // chim vẫn rơi
+
+        if (gameOverWait > 0) {
+            gameOverWait--;
+            return;
+        }
+
+        if (!input.isKeyDown(GLFW_KEY_SPACE)) {
+            canReset = true;
+        }
+
+        if (canReset && input.isKeyDown(GLFW_KEY_SPACE)) {
+            ScreenManager.changeScreen(ScreenManager.GAME);
+        }
+    }
+
+    public void render() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        background.render(bird.getY(), xScroll);
+        pipeManager.render(bird.getY(), xScroll);
+        birdRenderer.render(bird);
+        scoreManager.render();
+
+        if (state == GameState.GAMEOVER && !justReset) {
+            renderGameOver();
+        }
+
+        if (justReset) justReset = false;
+    }
+
+    private void renderGameOver() {
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        ShaderManager.UI.enable();
+        glActiveTexture(GL_TEXTURE0);
+        gameOverTexture.bind();
+        ShaderManager.UI.setUniform1i("tex", 0);
+
+        int screenWidth = 1280;
+        int screenHeight = 720;
+
+        Matrix4f model = Matrix4f.translate(
+                screenWidth / 2f - gameOverTexture.getWidth() / 2f,
+                screenHeight / 2f + gameOverTexture.getHeight() / 2f,
+                0
+        ).multiply(Matrix4f.scale(
+                gameOverTexture.getWidth(),
+                -gameOverTexture.getHeight(),
+                1
+        ));
+
+        ShaderManager.UI.setUniformMat4f("ml_matrix", model);
+        ShaderManager.UI.setUniformMat4f("pr_matrix", Matrix4f.orthographic(0, screenWidth, 0, screenHeight, -1, 1));
+
+        Renderer.draw(gameOverVAO);
+
+        gameOverTexture.unbind();
+        ShaderManager.UI.disable();
+
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
+    }
+
+    public boolean isGameOver() {
+        return state == GameState.GAMEOVER;
+    }
 }

@@ -1,5 +1,7 @@
 package flappy.main;
 
+import flappy.input.input;
+
 public class GameLoop implements Runnable{
 	private boolean running = false;
     private Thread thread;
@@ -28,12 +30,12 @@ public class GameLoop implements Runnable{
             delta += (now - lastTime) / ns;
             lastTime = now;
 
+            input.update();
             while (delta >= 1.0) {
                 game.update();
                 delta--;
             }
             game.render();
-
             if (game.shouldClose()) {
                 running = false;
             }

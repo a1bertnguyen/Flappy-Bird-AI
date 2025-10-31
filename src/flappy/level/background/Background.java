@@ -53,6 +53,9 @@ public class Background {
 
         ShaderManager.BG.disable();
         bgTexture.unbind();
+        System.out.println("[BG] render xScroll=" + xScroll);
+        
+
     }
 
     // Render nền tĩnh (dùng cho menu)
@@ -84,4 +87,9 @@ public class Background {
     public void nextMap() {
         map++;
     }
+    
+    public void reset() {
+        map = 0;
+    }
+
 }
