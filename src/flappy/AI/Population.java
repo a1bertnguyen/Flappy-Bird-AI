@@ -36,7 +36,14 @@ public class Population {
         removeStaleSpecies();
         sortSpeciesByFitness(); // (tuỳ chọn) Sắp xếp lại sau khi xóa bớt loài
 
-        nextGeneration();       // sinh thế hệ mới
+        nextGeneration();      // sinh thế hệ mới
+        System.out.println(
+                "Gen " + generation +
+                        " | Species " + speciesList.size() +
+                        " | Best fitness = " + speciesList.get(0).benchmarkFitness +
+                        " | Average = " + speciesList.stream().mapToDouble(s -> s.averageFitness).average().orElse(0)
+        );
+
     }
 
 

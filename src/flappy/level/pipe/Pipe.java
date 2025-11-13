@@ -8,7 +8,8 @@ import flappy.maths.Vector3f;
 import flappy.level.GameObject;
 public class Pipe implements GameObject{
 
-	private Vector3f position = new Vector3f();
+    public boolean passed = false;
+    private Vector3f position = new Vector3f();
 	private Matrix4f ml_matrix;
 	
 	private static float width = 1.5f, height = 8.0f;

@@ -71,6 +71,9 @@ public class Species {
         BirdBot parent = players.get(rand.nextInt(players.size()));
         BirdBot baby = parent.clone();
         baby.mutate();
+        System.out.println("Make offspring from fitness: " + parent.getFitness());
+
         return baby;
+
     }
 }

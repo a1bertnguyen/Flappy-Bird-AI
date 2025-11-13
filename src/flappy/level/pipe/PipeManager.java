@@ -2,6 +2,7 @@ package flappy.level.pipe;
 
 import java.util.Random;
 
+import flappy.AI.BirdBot;
 import flappy.graphics.VertexArray.Renderer;
 import flappy.graphics.Shader.ShaderManager;
 import flappy.maths.Matrix4f;
@@ -28,15 +29,46 @@ public class PipeManager {
     }
 
     public void updatePipes() {
-        pipes[index % 10] = new Pipe(OFFSET + index * 3.0f, random.nextFloat() * 4.0f);
-        pipes[(index + 1) % 10] = new Pipe(pipes[index % 10].getX(), pipes[index % 10].getY() - 11.5f);
+        Pipe top = new Pipe(OFFSET + index * 3.0f, random.nextFloat() * 4.0f);
+        top.passed = false;
+
+        Pipe bottom = new Pipe(top.getX(), top.getY() - 11.5f);
+        bottom.passed = false;
+
+        pipes[index % 10] = top;
+        pipes[(index + 1) % 10] = bottom;
+
         index += 2;
     }
+
+    public void checkPassed(Bird bird, BirdBot bot) {
+        // X world của chim
+        float birdX = bird.getX();
+
+        // Kiểm tra các ống "trên" (i, i+1 là cặp trên/dưới)
+        for (int i = 0; i < 10; i += 2) {
+            Pipe p = pipes[i];
+
+            // Nếu ống chưa được tính điểm và đã hoàn toàn đi qua bên trái chim
+            // (mép phải của ống < X của chim)
+            if (!p.passed && p.getX() + Pipe.getWidth() < birdX) {
+                p.passed = true;
+                bot.addPipePass();
+                System.out.println("Pipe passed! Total = " + bot.getPipesPassed());
+            }
+        }
+    }
+
 
     public void render(float birdY, int xScroll) {
         ShaderManager.PIPE.enable();
         ShaderManager.PIPE.setUniform2f("bird", 0, birdY);
-        ShaderManager.PIPE.setUniformMat4f("vw_matrix", Matrix4f.translate(new Vector3f(xScroll * 0.05f, 0.0f, 0.0f)));
+        // PipeManager.render
+        ShaderManager.PIPE.setUniformMat4f(
+                "vw_matrix",
+                Matrix4f.translate(new Vector3f(xScroll * 0.03f, 0.0f, 0.0f))
+        );
+
         Pipe.getTexture().bind();
         Pipe.getMesh().bind();
 
@@ -51,27 +83,34 @@ public class PipeManager {
     }
 
     public boolean checkCollision(Bird bird, int xScroll) {
-        for (int i = 0; i < 10; i++) {
-            float bx = -xScroll * 0.05f;
-            float by = bird.getY();
-            float px = pipes[i].getX();
-            float py = pipes[i].getY();
+        // Bird AABB (screen/world giống nhau vì bird không dùng xScroll trong render)
+        float bx0 = bird.getX() - bird.getSize() / 2.0f;
+        float bx1 = bird.getX() + bird.getSize() / 2.0f;
+        float by0 = bird.getY() - bird.getSize() / 2.0f;
+        float by1 = bird.getY() + bird.getSize() / 2.0f;
 
-            float bx0 = bx - bird.getSize() / 2.0f;
-            float bx1 = bx + bird.getSize() / 2.0f;
-            float by0 = by - bird.getSize() / 2.0f;
-            float by1 = by + bird.getSize() / 2.0f;
+        for (Pipe p : pipes) {
+            // X của pipe trên màn hình (do render có xScroll * 0.05f)
+            float px = p.getX() + xScroll * 0.05f;
+            float py = p.getY();
 
             float px0 = px;
             float px1 = px + Pipe.getWidth();
             float py0 = py;
             float py1 = py + Pipe.getHeight();
 
-            if (bx1 > px0 && bx0 < px1 && by1 > py0 && by0 < py1)
+            if (bx1 > px0 && bx0 < px1 && by1 > py0 && by0 < py1) {
+                System.out.println("COLLISION: birdX=" + bird.getX()
+                        + " pipeWorldX=" + p.getX()
+                        + " pipeScreenX=" + px);
                 return true;
+            }
         }
+
         return false;
     }
+
+
 
     public Pipe getClosestPipe(Bird bird) {
         Pipe closest = null;

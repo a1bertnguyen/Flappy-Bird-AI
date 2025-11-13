@@ -90,9 +90,21 @@ public class GameLogic implements IGameLogic {
         input.update();
 
         if (level.isGameOver()) {
+
+            System.out.println("=== ALL BIRDS DEAD — WAITING 10 SECONDS BEFORE NEXT GENERATION ===");
+
+            try {
+                Thread.sleep(100); // dừng 10 giây
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             populationManager.naturalSelection();
             level.resetLevel(populationManager.getBots());
+
+            System.out.println("=== NEW GENERATION CREATED ===");
         }
+
     }
 
     @Override
