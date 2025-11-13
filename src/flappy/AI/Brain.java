@@ -1,102 +1,121 @@
 package flappy.AI;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Brain {
-    public List<Node> nodes;
-    public List<Connection> connections;
+    public List<Node> nodes = new ArrayList<>();
+    public List<Connection> connections = new ArrayList<>();
+    public List<Node> net = new ArrayList<>();
     public int inputs;
     public int layers = 2;
-    public List<Node> net;
 
-
-    public Brain(int inputs) {
+    public Brain(int inputs, boolean clone) {
         this.inputs = inputs;
-        this.nodes = new ArrayList<>();
-        this.connections = new ArrayList<>();
 
-        initializeNetwork();
-    }
+        if (!clone) {
+            // Tạo các node input
+            for (int i = 0; i < inputs; i++) {
+                Node n = new Node(i);
+                n.layer = 0;
+                nodes.add(n);
+            }
 
-    private void initializeNetwork() {
-        Random rand = new Random();
+            // Node bias
+            Node bias = new Node(3);
+            bias.layer = 0;
+            nodes.add(bias);
 
-        // Tạo input nodes
-        for (int i = 0; i < inputs; i++) {
-            Node inputNode = new Node(i);
-            inputNode.layer = 0;
-            nodes.add(inputNode);
-        }
+            // Node output
+            Node output = new Node(4);
+            output.layer = 1;
+            nodes.add(output);
 
-        // Tạo bias node
-        Node biasNode = new Node(3);
-        biasNode.layer = 0;
-        nodes.add(biasNode);
-
-        // Tạo output node
-        Node outputNode = new Node(4);
-        outputNode.layer = 1;
-        nodes.add(outputNode);
-
-        // Tạo kết nối từ tất cả input + bias đến output
-        for (int i = 0; i <= 4; i++) { // inputs + 1 (bias)
-            Node from = nodes.get(i);
-            Connection conn = new Connection(from, outputNode, rand.nextFloat() * 2 - 1); // [-1, 1]
-            from.connections.add(conn);  // để node phát tín hiệu
-            connections.add(conn);       // để theo dõi toàn mạng
-        }
-
-    }
-    public void connectNodes() {
-        // Bước 1: reset danh sách connections của từng node
-        for (Node node : nodes) {
-            node.connections.clear();
-        }
-
-        // Bước 2: gán các connection vào node xuất phát (fromNode)
-        for (Connection conn : connections) {
-            conn.fromNode.connections.add(conn);
-        }
-    }
-    public void generateNet() {
-        connectNodes();
-        net = new ArrayList<>();
-
-        for (int j = 0; j < layers; j++) {
-            for (Node node : nodes) {
-                if (node.layer == j) {
-                    net.add(node);
-                }
+            // Kết nối input -> output
+            Random rand = new Random();
+            for (int i = 0; i < 4; i++) {
+                connections.add(new Connection(nodes.get(i), output, rand.nextFloat() * 2 - 1));
             }
         }
     }
+
+    public void connectNodes() {
+        for (Node node : nodes) node.connections.clear();
+        for (Connection c : connections) {
+            c.from.connections.add(c);
+        }
+    }
+
+    public void generateNet() {
+        connectNodes();
+        net.clear();
+        for (int l = 0; l < layers; l++) {
+            for (Node n : nodes) {
+                if (n.layer == l) net.add(n);
+            }
+        }
+    }
+
     public float feedForward(float[] vision) {
-        // 1. Gán đầu vào
+        // 1. Gán input cho các node đầu vào
         for (int i = 0; i < inputs; i++) {
-            nodes.get(i).outputValue = vision[i];
+            // vision[i] là giá trị cảm biến đã chuẩn hoá
+            nodes.get(i).inputValue = vision[i];
+            nodes.get(i).outputValue = vision[i];  // không bắt buộc, nhưng giúp rõ ràng
         }
 
-        // 2. Gán bias node
-        nodes.get(3).outputValue = 1;
+        // 2. Gán bias = 1 cho node bias (id = 3)
+        nodes.get(3).inputValue = 1f;
+        nodes.get(3).outputValue = 1f;
 
-        // 3. Kích hoạt mạng theo net
-        for (Node node : net) {
-            node.activate();
+        // 3. Kích hoạt lần lượt các node trong mạng
+        for (Node n : net) {
+            n.activate();
         }
 
-        // 4. Lấy output từ node ID 4 (output node)
-        float outputValue = nodes.get(4).outputValue;
+        // 4. Lấy output từ node output (id = 4)
+        float result = nodes.get(4).outputValue;
 
-        // 5. Reset inputValue
-        for (Node node : nodes) {
-            node.inputValue = 0;
+        // 5. Reset inputValue (và có thể cả cờ activated nếu bạn dùng nhiều lần)
+        for (Node n : nodes) {
+            n.inputValue = 0;
+            n.activated = false;  // nếu trong Node có biến này public / có setter
+            // nếu không, bạn có thể thêm hàm reset() trong Node và gọi ở đây
         }
 
-        return outputValue;
+        return result;
     }
 
 
 
+    public Brain cloneBrain() {
+        Brain clone = new Brain(inputs, true);
+
+        for (Node n : nodes) {
+            clone.nodes.add(n.cloneNode());
+        }
+
+        for (Connection c : connections) {
+            clone.connections.add(c.cloneConnection(clone.getNode(c.from.id), clone.getNode(c.to.id)));
+        }
+
+        clone.layers = this.layers;
+        clone.connectNodes();
+
+        return clone;
+    }
+
+    public Node getNode(int id) {
+        for (Node n : nodes) {
+            if (n.id == id) return n;
+        }
+        return null;
+    }
+
+    public void mutate() {
+        if (Math.random() < 0.8) {
+            for (Connection c : connections) {
+                c.mutateWeight();
+            }
+        }
+    }
 }

@@ -73,4 +73,13 @@ public class Pipe implements GameObject{
 	public static float getHeight() {
 		return height;
 	}
+
+    public float getTopPipeBottom() {
+        return position.y + 8.0f; // hoặc giá trị thật dựa trên game
+    }
+
+    public float getBottomPipeTop() {
+        return position.y - 8.0f; // tương ứng
+    }
+
 }

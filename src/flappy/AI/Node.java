@@ -14,20 +14,20 @@ public class Node {
 
     public Node(int id) {
         this.id = id;
-        this.layer = 0; // default: input layer
+        this.layer = 0;
     }
 
     public void activate() {
-        if (activated) return; // tránh kích hoạt nhiều lần
+        if (activated) return;
 
         if (layer == 1) {
-            outputValue = sigmoid(inputValue);  // input node
+            outputValue = sigmoid(inputValue);  // output node
         } else {
-            outputValue = inputValue; // hidden/output
+            outputValue = inputValue;
         }
 
         for (Connection conn : connections) {
-            conn.toNode.inputValue += outputValue * conn.weight;
+            conn.to.inputValue += outputValue * conn.weight;
         }
 
         activated = true;
@@ -41,6 +41,12 @@ public class Node {
         inputValue = 0;
         outputValue = 0;
         activated = false;
+    }
+
+    public Node cloneNode() {
+        Node clone = new Node(this.id);
+        clone.layer = this.layer;
+        return clone;
     }
 
     private float sigmoid(float x) {

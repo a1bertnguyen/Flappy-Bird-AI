@@ -72,4 +72,18 @@ public class PipeManager {
         }
         return false;
     }
+
+    public Pipe getClosestPipe(Bird bird) {
+        Pipe closest = null;
+        float minDist = Float.MAX_VALUE;
+        for (Pipe p : pipes) {
+            float dist = p.getX() - bird.getX();
+            if (dist > 0 && dist < minDist) {
+                minDist = dist;
+                closest = p;
+            }
+        }
+        return closest;
+    }
+
 }

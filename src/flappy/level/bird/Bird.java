@@ -1,34 +1,32 @@
 package flappy.level.bird;
 
-import static org.lwjgl.glfw.GLFW.*;
-
-
-import flappy.AI.*;
-import flappy.graphics.Shader.Shader;
-import flappy.graphics.Texture.Texture;
-import flappy.graphics.VertexArray.VertexArray;
-import flappy.input.input;
-import flappy.maths.Matrix4f;
-import flappy.maths.Vector3f;
 import flappy.level.Updateable;
+import flappy.maths.Vector3f;
 
 public class Bird implements Updateable {
     private Vector3f position = new Vector3f();
     private float delta = 0.0f;
     private float rot;
-    private float SIZE = 1.0f;
+    private static final float SIZE = 1.0f;
+    private boolean isAlive = true;
 
     @Override
     public void update() {
-        position.y -= delta;
-        if (input.isKeyPressed(GLFW_KEY_SPACE))
-            delta = -0.15f;
-        else
-            delta += 0.01f;
+        // Chim luôn bay sang phải
+        position.x += 0.02f;
 
+        // Trọng lực
+        position.y += delta;
+        delta += 0.01f;
+        if (delta > 0.2f) delta = 0.2f;
+
+        // Xoay chim theo vận tốc
         rot = -delta * 90.0f;
     }
-    private boolean isAlive = true;
+
+    public void jump() {
+        delta = -0.15f;
+    }
 
     public boolean isAlive() {
         return isAlive;
@@ -38,14 +36,6 @@ public class Bird implements Updateable {
         isAlive = false;
     }
 
-    public void jump() {
-        delta = -0.15f;
-    }
-
-    public void fall() {
-        delta = -0.1f;
-    }
-
     public float getY() {
         return position.y;
     }
@@ -53,6 +43,11 @@ public class Bird implements Updateable {
     public float getX() {
         return position.x;
     }
+
+    public void setY(float y) {
+        position.y = y;
+    }
+
 
     public float getRotation() {
         return rot;
@@ -65,4 +60,13 @@ public class Bird implements Updateable {
     public float getSize() {
         return SIZE;
     }
+
+    public int getLifespan() {
+        return (int) position.x;
+    }
+    public void fall() {
+        delta = 0.2f;
+        rot = -90f;
+    }
+
 }

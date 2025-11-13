@@ -1,30 +1,22 @@
 package flappy.level.background;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import flappy.AI.BirdBot;
-import flappy.graphics.VertexArray.Renderer;
-import flappy.graphics.Shader.Shader;
-import flappy.graphics.Shader.ShaderManager;
-import flappy.graphics.Texture.Texture;
 import flappy.graphics.VertexArray.VertexArray;
+import flappy.graphics.Shader.ShaderManager;
 import flappy.input.input;
-import flappy.maths.Matrix4f;
-import flappy.maths.Vector3f;
 import flappy.level.bird.Bird;
 import flappy.level.bird.BirdRenderer;
+import flappy.level.pipe.Pipe;
 import flappy.level.pipe.PipeManager;
+import flappy.maths.Matrix4f;
+import flappy.maths.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Level {
-    private List<Bird> birds = new ArrayList<>();
-    private List<BirdBot> bots = new ArrayList<>();
 
-
-    private Bird bird;
     private BirdRenderer birdRenderer;
     private PipeManager pipeManager;
     private Background background;
@@ -33,19 +25,17 @@ public class Level {
     private int xScroll = 0;
     private boolean control = true, reset = false;
 
-    private float time = 0.0f;
+    private List<BirdBot> bots;
 
-    public Level(int size) {
-        for (int i = 0; i < size; i++) {
-            Bird b = new Bird();
-            birds.add(b);
-            bots.add(new BirdBot(b));
-        }
-
-        birdRenderer = new BirdRenderer();
-        pipeManager = new PipeManager();
-        background = new Background();
-        fade = new VertexArray(6);
+    public Level(List<BirdBot> bots) {
+        this.bots = bots;
+        this.birdRenderer = new BirdRenderer();
+        this.pipeManager = new PipeManager();
+        this.background = new Background();
+        this.fade = new VertexArray(6);
+    }
+    public Pipe getClosestPipe(Bird bird) {
+        return pipeManager.getClosestPipe(bird);
     }
 
 
@@ -57,54 +47,67 @@ public class Level {
                 pipeManager.updatePipes();
         }
 
-        for (Bird bird : birds) {
-            if (!bird.isAlive()) continue;
-            bird.update();
-        }
-
         for (BirdBot bot : bots) {
             if (!bot.getBird().isAlive()) continue;
-            bot.update();
-        }
 
-        for (Bird bird : birds) {
-            if (!bird.isAlive()) continue;
+            bot.update(this);
 
-            if (bird.getY() < -5.625f || bird.getY() > 5.625f) {
-                bird.fall();
-                bird.kill();
-                continue;
+
+            if (bot.getBird().getY() < -5.625f || bot.getBird().getY() > 5.625f) {
+                bot.getBird().fall();
+                bot.getBird().kill();
             }
 
-            if (pipeManager.checkCollision(bird, xScroll)) {
-                bird.fall();
-                bird.kill();
+            if (pipeManager.checkCollision(bot.getBird(), xScroll)) {
+                bot.getBird().fall();
+                bot.getBird().kill();
             }
         }
 
-        if (birds.stream().noneMatch(Bird::isAlive)) {
+        if (bots.stream().noneMatch(b -> b.getBird().isAlive())) {
             control = false;
         }
 
-        if (!control && input.isKeyDown(GLFW_KEY_SPACE))
+        if (!control && input.isKeyDown(GLFW_KEY_SPACE)) {
             reset = true;
+        }
     }
 
-
     public void render() {
-        float y = birds.get(0).getY();
+        float y = getRepresentativeY(); // chim còn sống để lấy tọa độ Y
 
         background.render(y, xScroll);
         pipeManager.render(y, xScroll);
 
-        for (Bird bird : birds) {
-            if (!bird.isAlive()) continue;
-            birdRenderer.render(bird);
+        for (BirdBot bot : bots) {
+            if (!bot.getBird().isAlive()) continue;
+            birdRenderer.render(bot.getBird());
         }
     }
+    private float getRepresentativeY() {
+        for (BirdBot bot : bots) {
+            if (bot.getBird().isAlive()) {
+                return bot.getBird().getY();
+            }
+        }
+        return 0.0f; // fallback nếu tất cả chim đã chết
+    }
+
+
 
     public boolean isGameOver() {
         return reset;
     }
 
+    public void resetLevel(List<BirdBot> newBots) {
+        this.bots = newBots;
+        this.pipeManager = new PipeManager();
+        this.xScroll = 0;
+        this.control = true;
+        this.reset = false;
+    }
+
+    private float[] calculateVision(BirdBot bot) {
+        return new float[] {0.5f, 1f, 0.5f};
+    }
 }

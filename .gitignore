@@ -1,0 +1,33 @@
+﻿# IntelliJ IDEA
+.idea/
+*.iml
+out/
+*.ipr
+*.iws
+
+# Build directories
+target/
+build/
+bin/
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+
+# Gradle/Maven
+.gradle/
+.mvn/wrapper/maven-wrapper.jar
+target/
+
+# Env
+.env
