@@ -66,11 +66,12 @@ public class Level {
 
         if (bots.stream().noneMatch(b -> b.getBird().isAlive())) {
             control = false;
-        }
-
-        if (!control && input.isKeyDown(GLFW_KEY_SPACE)) {
             reset = true;
         }
+
+
+
+
     }
 
     public void render() {

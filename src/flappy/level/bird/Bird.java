@@ -12,8 +12,8 @@ public class Bird implements Updateable {
 
     @Override
     public void update() {
-        // Chim luôn bay sang phải
-        position.x += 0.02f;
+      /*  // Chim luôn bay sang phải
+        position.x += 0.02f;*/
 
         // Trọng lực
         position.y += delta;

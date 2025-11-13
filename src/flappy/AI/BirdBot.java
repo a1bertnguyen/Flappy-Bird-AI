@@ -16,6 +16,8 @@ public class BirdBot {
         this.fitness = 0;
         this.vision = new float[3];
         this.brain.generateNet();
+
+        this.bird.setY((float)(Math.random() * 2 - 1)); // random trong [-1, 1]
     }
 
     public void update(Level level) {
@@ -35,9 +37,10 @@ public class BirdBot {
         Pipe closest = level.getClosestPipe(bird);
 
         if (closest != null) {
-            float topDist = Math.max(0, bird.getY() - closest.getTopPipeBottom()) / 500f;
-            float pipeDist = Math.max(0, closest.getX() - bird.getX()) / 500f;
-            float bottomDist = Math.max(0, closest.getBottomPipeTop() - bird.getY()) / 500f;
+            float topDist    = (bird.getY() - closest.getTopPipeBottom()) / 6f;
+            float pipeDist   = (closest.getX() - bird.getX()) / 20f;
+            float bottomDist = (closest.getBottomPipeTop() - bird.getY()) / 6f;
+
 
             vision[0] = topDist;
             vision[1] = pipeDist;
@@ -48,7 +51,7 @@ public class BirdBot {
     public void think() {
         if (!bird.isAlive()) return;
         float output = brain.feedForward(vision);
-        if (output > 0.73f) {
+        if (output > 0.3f) {
             bird.jump();
         }
     }
