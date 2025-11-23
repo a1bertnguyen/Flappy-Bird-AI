@@ -56,6 +56,6 @@ public class GameScreen implements IScreen{
 	    }
 	    @Override
 	    public void dispose() {
-	        // Nếu cần dọn tài nguyên ở đây
+	         
 	    }
 }

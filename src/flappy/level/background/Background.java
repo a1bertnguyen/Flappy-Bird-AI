@@ -9,6 +9,9 @@ import flappy.graphics.VertexArray.Renderer;
 import flappy.maths.Matrix4f;
 import flappy.maths.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
+//Trong Background.java
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*; // <--- DÒNG NÀY PHẢI CÓ
 
 public class Background {
 	private VertexArray background;
@@ -30,7 +33,7 @@ public class Background {
             byte[] indices = new byte[] { 0, 1, 2, 2, 3, 0 };
             float[] tcs = new float[] { 0,1, 0,0, 1,0, 1,1 };
 
-//            fade = new VertexArray(6);
+ 
             background = new VertexArray(vertices, indices, tcs);
             bgTexture = TextureLoader.load("res/bg.jpeg");
     }
@@ -39,24 +42,58 @@ public class Background {
 //        time += 0.01f;
 //    }
 
-    public void render(float birdY, int xScroll) {
+//    public void render(float birdY, int xScroll) {
+//        bgTexture.bind();
+//        ShaderManager.BG.enable();
+//        ShaderManager.BG.setUniform2f("bird", 0, birdY);
+//        background.bind();
+//
+//        for (int i = map; i < map + 4; i++) {
+//        	ShaderManager.BG.setUniformMat4f("vw_matrix",
+//                Matrix4f.translate(new Vector3f(i * 10 + xScroll * 0.03f, 0.0f, 0.0f)));
+//            Renderer.draw(background);
+//        }
+//
+//        ShaderManager.BG.disable();
+//        bgTexture.unbind();
+//        System.out.println("[BG] render xScroll=" + xScroll);
+//        
+//
+//    }
+    
+    
+   
+
+    public void render(float birdY, float xScroll) {
+        // 1. Setup Shader/Texture (Giữ nguyên)
+        glActiveTexture(GL_TEXTURE1); 
         bgTexture.bind();
         ShaderManager.BG.enable();
+        ShaderManager.BG.setUniform1i("tex", 1); 
         ShaderManager.BG.setUniform2f("bird", 0, birdY);
         background.bind();
 
+        // 2. LOGIC TÍNH TOÁN VÀ VẼ CUỘN NỀN (Khôi phục)
+        final float WORLD_TILE_WIDTH = 10.0f;
+        final float SCROLL_FACTOR = 0.03f;
+        
+        // TÍNH TOÁN MAP DỰA TRÊN VỊ TRÍ CUỘN HIỆN TẠI
+        int map = (int) Math.floor((-xScroll * SCROLL_FACTOR) / WORLD_TILE_WIDTH);
+        
+        // Vòng lặp vẽ 4 tile nền
         for (int i = map; i < map + 4; i++) {
-        	ShaderManager.BG.setUniformMat4f("vw_matrix",
-                Matrix4f.translate(new Vector3f(i * 10 + xScroll * 0.03f, 0.0f, 0.0f)));
+            ShaderManager.BG.setUniformMat4f("vw_matrix",
+                Matrix4f.translate(new Vector3f(i * WORLD_TILE_WIDTH + xScroll * SCROLL_FACTOR, 0.0f, 0.0f)));
             Renderer.draw(background);
         }
+        // ------------------------------------
 
         ShaderManager.BG.disable();
+        glActiveTexture(GL_TEXTURE0); 
         bgTexture.unbind();
         System.out.println("[BG] render xScroll=" + xScroll);
-        
-
     }
+     
 
     // Render nền tĩnh (dùng cho menu)
     public void render() {

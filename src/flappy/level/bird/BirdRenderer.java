@@ -7,6 +7,10 @@ import flappy.graphics.Texture.TextureLoader;
 import flappy.graphics.VertexArray.Renderer;
 import flappy.graphics.VertexArray.VertexArray;
 import flappy.maths.Matrix4f;
+import flappy.maths.Vector3f;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*; // <--- DÒNG NÀY RẤT QUAN TRỌNG
 
 public class BirdRenderer {
 	 private VertexArray mesh;
@@ -34,15 +38,32 @@ public class BirdRenderer {
 
 	    }
 
-	    public void render(Bird bird) {
-	    	ShaderManager.BIRD.enable();
-	    	ShaderManager.BIRD.setUniformMat4f(
-	            "ml_matrix", 
-	            Matrix4f.translate(bird.getPosition())
-	                   .multiply(Matrix4f.rotate(bird.getRotation()))
-	        );
-	        texture.bind();
-	        Renderer.draw(mesh);
-	        ShaderManager.BIRD.disable();
-	    }
+    
+	   	 
+
+	 public void render(Bird bird, float xScroll) { 
+	     ShaderManager.BIRD.enable();
+
+	     
+	     Matrix4f vw_matrix = Matrix4f.identity(); 
+	     ShaderManager.BIRD.setUniformMat4f("vw_matrix", vw_matrix); 
+	     
+	     
+	     ShaderManager.BIRD.setUniformMat4f(
+	         "ml_matrix", 
+	         Matrix4f.translate(bird.getPosition())
+	            .multiply(Matrix4f.rotate(bird.getRotation()))
+	     );
+
+	 
+	     glActiveTexture(GL_TEXTURE1); 
+	     texture.bind();
+	  
+	     Renderer.draw(mesh);
+	    
+	     texture.unbind(); 
+	     ShaderManager.BIRD.disable();
+	 }
+	    
+	    
 	 }

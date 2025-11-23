@@ -1,3 +1,4 @@
+ 
 package flappy.score;
 
 import flappy.graphics.Texture.Texture;
@@ -42,9 +43,11 @@ public class ScoreManager {
         );
     }
 
+    // ✅ ĐÃ BỎ COMMENT VÀ ĐƯA VÀO HOẠT ĐỘNG
     public void addScore() {
         score++;
-        SoundManager.playTing(); // Gọi âm thanh mỗi khi tăng điểm
+        // Đảm bảo SoundManager.playTing() tồn tại và hoạt động
+        SoundManager.playTing(); 
     }
 
     public int getScore() {
@@ -54,10 +57,20 @@ public class ScoreManager {
     public void reset() {
         score = 0;
     }
+    // ✅ KẾT THÚC CÁC PHƯƠNG THỨC BỊ COMMENT
 
+    
     public void render() {
         ShaderManager.UI.enable();
         glDisable(GL_DEPTH_TEST);
+        
+        // ==========================================================
+        // FIX 1: THIẾT LẬP SHADER BINDING (Khắc phục lỗi màu đen)
+        // Cần thiết lập uniform sampler để shader biết đọc texture từ đâu
+        glActiveTexture(GL_TEXTURE0); 
+        ShaderManager.UI.setUniform1i("tex", 0); 
+        // ==========================================================
+        
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -66,13 +79,19 @@ public class ScoreManager {
         String s = String.valueOf(score);
         float digitWidth = 32;
         float x = 20;
-        float y = 680;
+        float y = 680; // Tọa độ Y mong muốn cho ĐỈNH TRÊN
 
         for (int i = 0; i < s.length(); i++) {
             int d = s.charAt(i) - '0';
             digits[d].bind();
-            Matrix4f model = Matrix4f.translate(x + i * (digitWidth + 4), y, 0)
+            
+            // ==========================================================
+            // FIX 2: CHỈNH LÝ TỌA ĐỘ Y (Khắc phục lỗi dịch chuyển)
+            // Bù trừ cho scale âm bằng cách dịch chuyển lên thêm digitWidth
+            Matrix4f model = Matrix4f.translate(x + i * (digitWidth + 4), y + digitWidth, 0)
                     .multiply(Matrix4f.scale(digitWidth,- digitWidth, 1));
+            // ==========================================================
+            
             ShaderManager.UI.setUniformMat4f("ml_matrix", model);
             Renderer.draw(vao);
             digits[d].unbind();

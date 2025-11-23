@@ -1,6 +1,9 @@
 package flappy.graphics.Texture;
 
 import java.awt.image.BufferedImage;
+import static org.lwjgl.opengl.GL11.*;
+ 
+
 import java.io.FileInputStream;
 import javax.imageio.ImageIO;
 import static org.lwjgl.opengl.GL11.*;
@@ -22,15 +25,31 @@ public class TextureLoader {
                 int r = (pixels[i] & 0xff0000) >> 16;
                 int g = (pixels[i] & 0xff00) >> 8;
                 int b = (pixels[i] & 0xff);
-                data[i] = a << 24 | b << 16 | g << 8 | r;
+                
+                // quan trọng
+//                data[i] = a << 24 | b << 16 | g << 8 | r;
+                
+                
+             // Thay đổi thứ tự byte để khớp với GL_RGBA:
+                data[i] = r | g << 8 | b << 16 | a << 24; // Thử nghiệm: RGBA trong Big Endian
+         
+                
             }
 
             int id = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, id);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+
+//             quan trojng 
+                        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
                     GL_RGBA, GL_UNSIGNED_BYTE, BufferUtils.createIntBuffer(data));
+            
+ 
+            
+         
+            
+            
             glBindTexture(GL_TEXTURE_2D, 0);
 
             return new Texture(id, width, height);
