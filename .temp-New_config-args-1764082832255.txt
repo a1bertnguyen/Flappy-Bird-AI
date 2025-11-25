@@ -1,0 +1,9 @@
+-Dorg.lwjgl.librarypath=D:/Download/lwjgl/lwjgl
+"-Djava.library.path=D:\\Download\\lwjgl\\lwjgl;D:\\Download\\lwjgl\\lwjgl;D:\\Download\\lwjgl\\lwjgl;D:\\Download\\lwjgl\\lwjgl"
+-Dfile.encoding=UTF-8
+-Dstdout.encoding=UTF-8
+-Dstderr.encoding=UTF-8
+-classpath
+"C:\\Users\\DELL\\eclipse-workspace\\Flappy-Bird-AI\\bin;D:\\Download\\lwjgl\\lwjgl-glfw\\lwjgl-glfw.jar;D:\\Download\\lwjgl\\lwjgl-opengl\\lwjgl-opengl.jar;D:\\Download\\lwjgl\\lwjgl-stb\\lwjgl-stb.jar;D:\\Download\\lwjgl\\lwjgl\\lwjgl.jar"
+-XX:+ShowCodeDetailsInExceptionMessages
+flappy.main.Main

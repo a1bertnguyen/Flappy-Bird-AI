@@ -18,7 +18,7 @@ import flappy.graphics.Shader.ShaderManager;
 
 public class MenuScreen {
 	
-	private Texture background;// menu background
+	private Texture background; 
 	private IVertexArray bgVao;
 
 
@@ -44,7 +44,7 @@ public class MenuScreen {
  
             
             Matrix4f model = Matrix4f.translate(x, y + height, 0)
-                    .multiply(Matrix4f.scale(width, -height, 1)); //  lật trục Y
+                    .multiply(Matrix4f.scale(width, -height, 1));  
             shader.setUniformMat4f("ml_matrix", model);
             vao.bind();
             Renderer.draw(vao);
@@ -83,7 +83,7 @@ public class MenuScreen {
     private Map<String, MenuButton> buttons = new LinkedHashMap<>();
     private Shader shader;
     private Matrix4f projection;
-    private Consumer<String> onClick; // ✅ callback
+    private Consumer<String> onClick;  
 
     private int screenWidth, screenHeight;
 
@@ -95,14 +95,14 @@ public class MenuScreen {
         background = TextureLoader.load("res/menu_bg.png");
  
         bgVao = new VertexArray(
-            new float[]{ // 1. Vertices
+            new float[]{ 
                 0f, 0f, 0f,
                 1f, 0f, 0f,
                 1f, 1f, 0f,
                 0f, 1f, 0f
             },
-            new byte[]{0, 1, 2, 2, 3, 0}, // 2. Indices (Đã chuyển lên)
-            new float[]{ // 3. Texture Coordinates (Đã chuyển xuống)
+            new byte[]{0, 1, 2, 2, 3, 0},  
+            new float[]{  
                 0f, 0f,
                 1f, 0f,
                 1f, 1f,
@@ -111,7 +111,7 @@ public class MenuScreen {
         );
         
         
-//        shader = ShaderManager.BG;
+ 
         shader = ShaderManager.UI;
         
         projection = Matrix4f.orthographic(0, width, 0, height, -1, 1);
@@ -140,11 +140,11 @@ public class MenuScreen {
         shader.enable();
         shader.setUniformMat4f("pr_matrix", projection);
 
-        glDisable(GL_DEPTH_TEST); // 🔧 tắt depth test cho UI
+        glDisable(GL_DEPTH_TEST);  
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // --- Vẽ background ---
+    
         background.bind();
 
         float bgScaleX = screenWidth;
@@ -166,7 +166,7 @@ public class MenuScreen {
 
         glDisable(GL_BLEND);
         shader.disable();
-        glEnable(GL_DEPTH_TEST); // bật lại nếu game cần
+        glEnable(GL_DEPTH_TEST);  
     }
 
 }
