@@ -27,7 +27,7 @@ import flappy.graphics.Shader.ShaderManager;
 
 public class MenuScreen implements IScreen{
 	
-	private Texture background;// menu background
+	private Texture background; 
 	private IVertexArray bgVao;
 		private long window;
 	private List<Button> buttons=new ArrayList<>();
@@ -134,13 +134,13 @@ public class MenuScreen implements IScreen{
         Renderer.draw(bgVao);
         background.unbind();
 
-        // ❌ TẮT SHADER để quay lại fixed pipeline
+     
         shader.disable();
 
-        // --- Setup fixed-function để vẽ button ---
+     
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, w, h, 0, -1, 1); // (0,0) góc trái trên
+        glOrtho(0, w, h, 0, -1, 1);  
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -171,7 +171,7 @@ public class MenuScreen implements IScreen{
 	       glMatrixMode(GL_MODELVIEW);
 	       glLoadIdentity();
 
-	       // Cực kỳ quan trọng: clear màn hình trước khi init
+	      
 	       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     

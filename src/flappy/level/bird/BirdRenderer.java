@@ -38,7 +38,10 @@ public class BirdRenderer {
 
 	    }
 
-    
+	    public Texture getTexture() {
+	        return texture;
+	    }
+
 	   	 
 
 	 public void render(Bird bird, float xScroll) { 

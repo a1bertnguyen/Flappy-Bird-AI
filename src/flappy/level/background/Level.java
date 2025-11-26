@@ -3,6 +3,7 @@
 
 package flappy.level.background;
 
+import flappy.BandScore.BandScore;
 import flappy.Screen.Difficulty;
 import flappy.Screen.ScreenManager;
 import flappy.audio.SoundManager;
@@ -43,6 +44,12 @@ public class Level {
     private final Texture gameOverTexture;
     private final VertexArray gameOverVAO;
 
+    private BandScore bandScore=null;
+    
+    
+    
+    private Texture birdSkin;
+
     public Level(Difficulty difficulty) {
         this.difficulty = difficulty;
 
@@ -51,7 +58,11 @@ public class Level {
         pipeManager = new PipeManager(difficulty.pipeGap);
         background = new Background();
         scoreManager = new ScoreManager();
+ 
 
+        bandScore = new BandScore(scoreManager, difficulty, birdRenderer.getTexture());
+        
+        
         background.init();
         SoundManager.init();
         SoundManager.playBackground();
@@ -74,7 +85,6 @@ public class Level {
     }
 
     private void updatePlaying() {
-
         boolean down = input.isKeyDown(GLFW_KEY_SPACE);
 
         if (down && !flapPressed) {
@@ -83,12 +93,8 @@ public class Level {
             SoundManager.playFlap();
         } else if (!down) flapPressed = false;
 
-        // ---------------------------
-        // CUỘN NỀN
-        // ---------------------------
+        // Cuộn nền
         xScroll -= difficulty.speed;
-
-        // Tiling nền
         if (-xScroll >= difficulty.backgroundLength) {
             xScroll += difficulty.backgroundLength;
             background.nextMap();
@@ -96,24 +102,16 @@ public class Level {
 
         float worldX = -xScroll;
 
-        // ---------------------------
-        // PIPE UPDATE CHUẨN  
-        // ---------------------------
         pipeManager.update(worldX);
-
         bird.update();
 
-        // ---------------------------
-        // TÍNH ĐIỂM
-        // ---------------------------
+        // Tính điểm
         if (pipeManager.checkPass(bird, xScroll)) {
             scoreManager.addScore();
             SoundManager.playTing();
         }
 
-        // ---------------------------
-        // VA CHẠM
-        // ---------------------------
+        // Va chạm
         boolean out = (bird.getY() < -5.6f || bird.getY() > 5.6f);
         boolean hit = pipeManager.checkCollision(bird, xScroll);
 
@@ -125,18 +123,29 @@ public class Level {
         }
     }
 
+ 
+    
     private void updateGameOver() {
         bird.update();
 
-        if (gameOverWait > 0) { gameOverWait--; return; }
+        if (gameOverWait > 0) { 
+            gameOverWait--; 
+            return; 
+        }
 
         if (!input.isKeyDown(GLFW_KEY_SPACE)) canReset = true;
 
         if (canReset && input.isKeyDown(GLFW_KEY_SPACE)) {
+            bandScore = null;      // reset BandScore
+            scoreManager.reset();  // reset điểm
             ScreenManager.changeScreen(ScreenManager.GAME);
         }
     }
 
+    
+
+ 
+    
     public void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -145,9 +154,18 @@ public class Level {
         birdRenderer.render(bird, xScroll);
         scoreManager.render();
 
-        if (state == GameState.GAMEOVER)
+        if (state == GameState.GAMEOVER) {
             renderGameOver();
+
+         
+            if (bandScore == null)
+                bandScore = new BandScore(scoreManager, difficulty, birdRenderer.getTexture());
+
+            bandScore.render();
+        }
     }
+
+    
 
     private void renderGameOver() {
         glDisable(GL_DEPTH_TEST);
@@ -160,14 +178,18 @@ public class Level {
         gameOverTexture.bind();
         ShaderManager.UI.setUniform1i("tex", 0);
 
-        Matrix4f model = Matrix4f.translate(500, 400, 0)
-                .multiply(Matrix4f.scale(300, -150, 1));
+     
+    Matrix4f model = Matrix4f.translate(640 -200, 520+150, 0)
+             .multiply(Matrix4f.scale(400, -250, 1));
+
 
         ShaderManager.UI.setUniformMat4f("ml_matrix", model);
         ShaderManager.UI.setUniformMat4f("pr_matrix",
                 Matrix4f.orthographic(0, 1280, 0, 720, -1, 1));
 
         Renderer.draw(gameOverVAO);
+
+        gameOverTexture.unbind();
 
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);

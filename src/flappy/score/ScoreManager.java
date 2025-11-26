@@ -101,4 +101,16 @@ public class ScoreManager {
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
     }
+    
+    
+    
+    // getter, setter for bandScore
+    public Texture getDigit(int index) {
+        return digits[index];
+    }
+
+    public VertexArray getVao() {
+        return vao;
+    }
+
 }

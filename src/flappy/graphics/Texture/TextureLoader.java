@@ -26,12 +26,11 @@ public class TextureLoader {
                 int g = (pixels[i] & 0xff00) >> 8;
                 int b = (pixels[i] & 0xff);
                 
-                // quan trọng
-//                data[i] = a << 24 | b << 16 | g << 8 | r;
+ 
                 
                 
-             // Thay đổi thứ tự byte để khớp với GL_RGBA:
-                data[i] = r | g << 8 | b << 16 | a << 24; // Thử nghiệm: RGBA trong Big Endian
+          
+                data[i] = r | g << 8 | b << 16 | a << 24;  
          
                 
             }
@@ -41,7 +40,7 @@ public class TextureLoader {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-//             quan trojng 
+ 
                         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
                     GL_RGBA, GL_UNSIGNED_BYTE, BufferUtils.createIntBuffer(data));
             

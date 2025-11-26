@@ -15,11 +15,10 @@ public class Bird implements Updateable {
     private float delta = 0.0f;
     private float rot;
     private float SIZE = 1.0f;
-
-    // ⭐ Tham số mới cho chuyển động mượt EASY
-    private final float FLAP_STRENGTH = -0.11f;   // mạnh hơn số âm = bay lên mạnh, nên giảm cho EASY
-    private final float GRAVITY = 0.007f;         // rơi rất nhẹ -> giống Flappy Bird gốc
-    private final float MAX_DELTA = 0.25f;        // tránh rơi quá nhanh
+ 
+    private final float FLAP_STRENGTH = -0.11f;  
+    private final float GRAVITY = 0.007f;         
+    private final float MAX_DELTA = 0.25f;         
 
     @Override
     public void update() {
@@ -28,16 +27,16 @@ public class Bird implements Updateable {
         position.y -= delta;
 
         if (input.isKeyPressed(GLFW_KEY_SPACE)) {
-            delta = FLAP_STRENGTH;         // lực vỗ cánh
+            delta = FLAP_STRENGTH;          
         } else {
-            delta += GRAVITY;              // trọng lực nhẹ → rơi chậm
+            delta += GRAVITY;               
         }
 
-        // ⭐ Giới hạn tốc độ rơi để không quá nhanh
+     
         if (delta > MAX_DELTA)
             delta = MAX_DELTA;
 
-        // ⭐ Độ xoay mượt, không quá mạnh
+       
         rot = -delta * 70.0f;
     }
 
@@ -46,7 +45,7 @@ public class Bird implements Updateable {
     }
 
     public void fall() {
-        delta = 0.10f;   // không dùng nhiều, chỉ khi gameover
+        delta = 0.10f;   
     }
 
     public void reset() {

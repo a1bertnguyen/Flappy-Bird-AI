@@ -67,44 +67,7 @@ public class LevelScreen implements IScreen {
    	    buttons.add(selectButton);
     }
 
-    
-    //quan trọng 
-//    @Override
-//    public void update() {
-// 	   glfwPollEvents();     
-//        double mouseX = input.getMouseX();
-//        double mouseY = input.getMouseY();
-//        for (Button b : buttons) {
-//            if (b.isHovered((float) mouseX, (float) mouseY) &&
-//                input.isMouseClicked(GLFW_MOUSE_BUTTON_LEFT)) {
-// 		           	String label = b.getLabel();
-// 		           	if (label.equals("EASY")) {
-// 		            	ScreenManager.setSelectedLevel(Difficulty.EASY);
-// 		            	System.out.print("easy chosen");
-// 		               } 
-// 		           	if (label.equals("MEDIUM")) {
-// 		            	ScreenManager.setSelectedLevel(Difficulty.MEDIUM);
-// 		            	System.out.print("medium chosen");
-// 		               } 
-// 		           	if (label.equals("HARD")) {
-// 		           		ScreenManager.setSelectedLevel(Difficulty.HARD);
-// 		           		System.out.print("hard chosen");
-// 		               } 
-// 		           if (label.equals("SELECT")) {
-//		                ScreenManager.changeScreen(ScreenManager.MENU);
-//		               } 
-// 		           }
-//        		}
-//        if (input.isKeyPressed(GLFW_KEY_ESCAPE)) {
-//            ScreenManager.changeScreen(ScreenManager.MENU);
-//        }
-//        
-//        input.update();
-//    }
-
-    
- // Logic update() mẫu trong LevelScreen.java (Giả sử bạn đã có lớp LevelScreen)
-
+  
     @Override
     public void update() {
         glfwPollEvents();
@@ -121,7 +84,7 @@ public class LevelScreen implements IScreen {
                 if (label.equals("EASY")) {
                     ScreenManager.setSelectedLevel(Difficulty.EASY);
                     System.out.println("EASY chosen (Speed: " + Difficulty.EASY.speed + ")");
-                    // Có thể thêm logic chọn nút (ví dụ: đổi màu nút được chọn)
+                   
                 } else if (label.equals("MEDIUM")) {
                     ScreenManager.setSelectedLevel(Difficulty.MEDIUM);
                     System.out.println("MEDIUM chosen (Speed: " + Difficulty.MEDIUM.speed + ")");
@@ -131,12 +94,12 @@ public class LevelScreen implements IScreen {
                 } else if (label.equals("SELECT")) {
                     // Sau khi chọn mức độ, quay lại Menu
                     ScreenManager.changeScreen(ScreenManager.MENU); 
-                    // HOẶC chuyển thẳng vào game: ScreenManager.changeScreen(ScreenManager.GAME);
+            
                 }
             }
         }
         
-        // Nếu bạn muốn nút ESC quay lại Menu
+       
         if (input.isKeyPressed(GLFW_KEY_ESCAPE)) {
             ScreenManager.changeScreen(ScreenManager.MENU);
         }
