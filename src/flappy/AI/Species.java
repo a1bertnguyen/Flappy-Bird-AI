@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Random;
 
 public class Species {
+
     public List<BirdBot> players = new ArrayList<>();
     public float averageFitness = 0;
-    public float threshold = 1.2f;
+    public float threshold = 1.0f;
     public float benchmarkFitness;
     public Brain benchmarkBrain;
     public BirdBot champion;

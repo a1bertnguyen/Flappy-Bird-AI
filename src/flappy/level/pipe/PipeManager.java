@@ -10,6 +10,7 @@ import flappy.maths.Vector3f;
 import flappy.level.bird.Bird;
 
 public class PipeManager {
+
     private Pipe[] pipes = new Pipe[10];
     private int index = 0;
     private float OFFSET = 5.0f;
@@ -54,11 +55,9 @@ public class PipeManager {
             if (!p.passed && p.getX() + Pipe.getWidth() < birdX) {
                 p.passed = true;
                 bot.addPipePass();
-                System.out.println("Pipe passed! Total = " + bot.getPipesPassed());
             }
         }
     }
-
 
     public void render(float birdY, int xScroll) {
         ShaderManager.PIPE.enable();
@@ -90,7 +89,7 @@ public class PipeManager {
         float by1 = bird.getY() + bird.getSize() / 2.0f;
 
         for (Pipe p : pipes) {
-            // X của pipe trên màn hình (do render có xScroll * 0.05f)
+            // X của pipe trên màn hình (đồng bộ với render xScroll * 0.03f)
             float px = p.getX() + xScroll * 0.05f;
             float py = p.getY();
 
@@ -100,17 +99,12 @@ public class PipeManager {
             float py1 = py + Pipe.getHeight();
 
             if (bx1 > px0 && bx0 < px1 && by1 > py0 && by0 < py1) {
-                System.out.println("COLLISION: birdX=" + bird.getX()
-                        + " pipeWorldX=" + p.getX()
-                        + " pipeScreenX=" + px);
                 return true;
             }
         }
 
         return false;
     }
-
-
 
     public Pipe getClosestPipe(Bird bird) {
         Pipe closest = null;

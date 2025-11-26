@@ -3,6 +3,7 @@ package flappy.AI;
 import java.util.*;
 
 public class Brain {
+
     public List<Node> nodes = new ArrayList<>();
     public List<Connection> connections = new ArrayList<>();
     public List<Node> net = new ArrayList<>();
@@ -39,7 +40,9 @@ public class Brain {
     }
 
     public void connectNodes() {
-        for (Node node : nodes) node.connections.clear();
+        for (Node node : nodes) {
+            node.connections.clear();
+        }
         for (Connection c : connections) {
             c.from.connections.add(c);
         }
@@ -50,7 +53,9 @@ public class Brain {
         net.clear();
         for (int l = 0; l < layers; l++) {
             for (Node n : nodes) {
-                if (n.layer == l) net.add(n);
+                if (n.layer == l) {
+                    net.add(n);
+                }
             }
         }
     }
@@ -85,8 +90,6 @@ public class Brain {
         return result;
     }
 
-
-
     public Brain cloneBrain() {
         Brain clone = new Brain(inputs, true);
 
@@ -106,16 +109,42 @@ public class Brain {
 
     public Node getNode(int id) {
         for (Node n : nodes) {
-            if (n.id == id) return n;
+            if (n.id == id) {
+                return n;
+            }
         }
         return null;
     }
 
     public void mutate() {
-        if (Math.random() < 0.8) {
+        if (Math.random() < 0.9) {
             for (Connection c : connections) {
                 c.mutateWeight();
             }
         }
+
+        if (Math.random() < 0.05) {
+            addHiddenNode();
+        }
+    }
+
+    private void addHiddenNode() {
+        if (nodes.size() >= 10) {
+            return;
+        }
+
+        int newId = nodes.size();
+        Node hidden = new Node(newId);
+        hidden.layer = 1; // hidden layer between 0 and 2
+        nodes.add(hidden);
+
+        // Add connections: input0 -> hidden -> output
+        Node input0 = nodes.get(0);
+        Node output = nodes.get(nodes.size() - 2); // last before hidden, but id 4 if no prior
+
+        connections.add(new Connection(input0, hidden, 1.0f));
+        connections.add(new Connection(hidden, output, 1.0f));
+
+        layers = 3;
     }
 }

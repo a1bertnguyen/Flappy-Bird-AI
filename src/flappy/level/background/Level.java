@@ -56,13 +56,11 @@ public class Level {
 
 
             if (bot.getBird().getY() < -5.625f || bot.getBird().getY() > 5.625f) {
-                System.out.println("DEAD: Out of bounds | y = " + bot.getBird().getY());
                 bot.getBird().fall();
                 bot.getBird().kill();
             }
 
             if (pipeManager.checkCollision(bot.getBird(), xScroll)) {
-                System.out.println("DEAD: Hit pipe | pipeX=" + bot.getBird().getX());
                 bot.getBird().fall();
                 bot.getBird().kill();
             }

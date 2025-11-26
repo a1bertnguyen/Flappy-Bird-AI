@@ -5,6 +5,7 @@ import flappy.level.background.Level;
 import java.util.*;
 
 public class Population {
+
     public List<BirdBot> players = new ArrayList<>();
     public List<Species> speciesList = new ArrayList<>();
     public int size;
@@ -25,7 +26,6 @@ public class Population {
         }
     }
 
-
     public void naturalSelection() {
         speciate();             // phân chim vào các loài
         calculateFitness();     // tính fitness cho từng chim + avg cho loài
@@ -38,14 +38,13 @@ public class Population {
 
         nextGeneration();      // sinh thế hệ mới
         System.out.println(
-                "Gen " + generation +
-                        " | Species " + speciesList.size() +
-                        " | Best fitness = " + speciesList.get(0).benchmarkFitness +
-                        " | Average = " + speciesList.stream().mapToDouble(s -> s.averageFitness).average().orElse(0)
+                "Gen " + generation
+                + " | Species " + speciesList.size()
+                + " | Best fitness = " + speciesList.get(0).benchmarkFitness
+                + " | Average = " + speciesList.stream().mapToDouble(s -> s.averageFitness).average().orElse(0)
         );
 
     }
-
 
     public void speciate() {
         for (Species s : speciesList) {
@@ -62,7 +61,21 @@ public class Population {
                 }
             }
             if (!added) {
-                speciesList.add(new Species(p));
+                if (speciesList.size() < 100) {
+                    speciesList.add(new Species(p));
+                } else {
+                    // Thêm vào species giống nhất dù không đủ threshold để tránh explosion
+                    Species closest = speciesList.get(0);
+                    float minDiff = Species.weightDifference(closest.benchmarkBrain, p.getBrain());
+                    for (int i = 1; i < speciesList.size(); i++) {
+                        float diff = Species.weightDifference(speciesList.get(i).benchmarkBrain, p.getBrain());
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            closest = speciesList.get(i);
+                        }
+                    }
+                    closest.add(p);
+                }
             }
         }
     }
@@ -75,7 +88,6 @@ public class Population {
             s.calculateAverageFitness();
         }
     }
-
 
     public void removeExtinctSpecies() {
         speciesList.removeIf(s -> s.players.isEmpty());
@@ -127,10 +139,13 @@ public class Population {
 
     public boolean allDead() {
         for (BirdBot p : players) {
-            if (p.getBird().isAlive()) return false;
+            if (p.getBird().isAlive()) {
+                return false;
+            }
         }
         return true;
     }
+
     public List<BirdBot> getBots() {
         return players;
     }
