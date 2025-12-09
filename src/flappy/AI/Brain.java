@@ -117,13 +117,13 @@ public class Brain {
     }
 
     public void mutate() {
-        if (Math.random() < 0.9) {
+        if (Math.random() < 0.95) {
             for (Connection c : connections) {
                 c.mutateWeight();
             }
         }
 
-        if (Math.random() < 0.05) {
+        if (Math.random() < 0.15) {
             addHiddenNode();
         }
     }

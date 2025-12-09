@@ -33,16 +33,6 @@ public class Node {
         activated = true;
     }
 
-    public void addConnection(Node to, float weight) {
-        connections.add(new Connection(this, to, weight));
-    }
-
-    public void reset() {
-        inputValue = 0;
-        outputValue = 0;
-        activated = false;
-    }
-
     public Node cloneNode() {
         Node clone = new Node(this.id);
         clone.layer = this.layer;

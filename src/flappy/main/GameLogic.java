@@ -28,7 +28,7 @@ public class GameLogic implements IGameLogic {
     private input input;
 
     private Population populationManager;
-    private final int POPULATION_SIZE = 100;
+    private final int POPULATION_SIZE = 1000;
 
     @Override
     public void init() {
@@ -79,7 +79,6 @@ public class GameLogic implements IGameLogic {
         populationManager = new Population(POPULATION_SIZE); // gán đúng vào biến toàn cục
         List<BirdBot> bots = populationManager.getBots();    // rồi lấy danh sách bots
         level = new Level(bots);
-
 
     }
 

@@ -62,10 +62,11 @@ public class PipeManager {
     public void render(float birdY, int xScroll) {
         ShaderManager.PIPE.enable();
         ShaderManager.PIPE.setUniform2f("bird", 0, birdY);
-        // PipeManager.render
+        // PipeManager.render - modulo to prevent off-screen with high xScroll (long AI survival)
+        float offset = (xScroll * 0.03f) % 200f;
         ShaderManager.PIPE.setUniformMat4f(
                 "vw_matrix",
-                Matrix4f.translate(new Vector3f(xScroll * 0.03f, 0.0f, 0.0f))
+                Matrix4f.translate(new Vector3f(offset, 0.0f, 0.0f))
         );
 
         Pipe.getTexture().bind();
