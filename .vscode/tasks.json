@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile Flappy Bird",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "$src = Get-ChildItem src -Recurse -Filter *.java | ForEach-Object { $_.FullName }; $cp = @(); Get-ChildItem lib\\lwjgl-*.jar | ForEach-Object { $cp += $_.FullName }; $cp += 'lib\\lwjgl.jar'; $classpath = $cp -join ';'; javac -cp \\\"`$classpath\\\" -d bin $src"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$javac"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}

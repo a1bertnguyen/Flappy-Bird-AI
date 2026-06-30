@@ -13,7 +13,8 @@ public class PipeManager {
 
     private Pipe[] pipes = new Pipe[10];
     private int index = 0;
-    private float OFFSET = 5.0f;
+    private static final float OFFSET = 5.0f;
+    private static final float PIPE_SCROLL_SPEED = 0.05f;
     private Random random = new Random();
 
     public PipeManager() {
@@ -24,17 +25,14 @@ public class PipeManager {
     private void createPipes() {
         for (int i = 0; i < 10; i += 2) {
             pipes[i] = new Pipe(OFFSET + index * 3.0f, random.nextFloat() * 4.0f);
-            pipes[i + 1] = new Pipe(pipes[i].getX(), pipes[i].getY() - 11.5f);
+            pipes[i + 1] = new Pipe(pipes[i].getX(), pipes[i].getY() - Pipe.getPairOffset());
             index += 2;
         }
     }
 
     public void updatePipes() {
         Pipe top = new Pipe(OFFSET + index * 3.0f, random.nextFloat() * 4.0f);
-        top.passed = false;
-
-        Pipe bottom = new Pipe(top.getX(), top.getY() - 11.5f);
-        bottom.passed = false;
+        Pipe bottom = new Pipe(top.getX(), top.getY() - Pipe.getPairOffset());
 
         pipes[index % 10] = top;
         pipes[(index + 1) % 10] = bottom;
@@ -42,19 +40,19 @@ public class PipeManager {
         index += 2;
     }
 
-    public void checkPassed(Bird bird, BirdBot bot) {
+    public void checkPassed(Bird bird, BirdBot bot, int xScroll) {
         // X world của chim
         float birdX = bird.getX();
 
         // Kiểm tra các ống "trên" (i, i+1 là cặp trên/dưới)
         for (int i = 0; i < 10; i += 2) {
             Pipe p = pipes[i];
+            float pipeRight = getScreenX(p, xScroll) + Pipe.getWidth();
 
             // Nếu ống chưa được tính điểm và đã hoàn toàn đi qua bên trái chim
             // (mép phải của ống < X của chim)
-            if (!p.passed && p.getX() + Pipe.getWidth() < birdX) {
-                p.passed = true;
-                bot.addPipePass();
+            if (pipeRight < birdX && !bot.hasPassedPipe(p)) {
+                bot.addPipePass(p);
             }
         }
     }
@@ -62,8 +60,8 @@ public class PipeManager {
     public void render(float birdY, int xScroll) {
         ShaderManager.PIPE.enable();
         ShaderManager.PIPE.setUniform2f("bird", 0, birdY);
-        // PipeManager.render - modulo to prevent off-screen with high xScroll (long AI survival)
-        float offset = (xScroll * 0.03f) % 200f;
+        // Keep render, collision, AI vision, and scoring in the same pipe coordinate space.
+        float offset = getScrollOffset(xScroll);
         ShaderManager.PIPE.setUniformMat4f(
                 "vw_matrix",
                 Matrix4f.translate(new Vector3f(offset, 0.0f, 0.0f))
@@ -90,8 +88,8 @@ public class PipeManager {
         float by1 = bird.getY() + bird.getSize() / 2.0f;
 
         for (Pipe p : pipes) {
-            // X của pipe trên màn hình (đồng bộ với render xScroll * 0.03f)
-            float px = p.getX() + xScroll * 0.05f;
+            // Pipe X on screen, synced with render and AI vision.
+            float px = getScreenX(p, xScroll);
             float py = p.getY();
 
             float px0 = px;
@@ -107,17 +105,27 @@ public class PipeManager {
         return false;
     }
 
-    public Pipe getClosestPipe(Bird bird) {
+    public Pipe getClosestPipe(Bird bird, int xScroll) {
         Pipe closest = null;
         float minDist = Float.MAX_VALUE;
-        for (Pipe p : pipes) {
-            float dist = p.getX() - bird.getX();
+        for (int i = 0; i < 10; i += 2) {
+            Pipe p = pipes[i];
+            float pipeLeft = getScreenX(p, xScroll);
+            float dist = pipeLeft + Pipe.getWidth() - bird.getX();
             if (dist > 0 && dist < minDist) {
                 minDist = dist;
                 closest = p;
             }
         }
         return closest;
+    }
+
+    public float getScreenX(Pipe pipe, int xScroll) {
+        return pipe.getX() + getScrollOffset(xScroll);
+    }
+
+    private float getScrollOffset(int xScroll) {
+        return xScroll * PIPE_SCROLL_SPEED;
     }
 
 }

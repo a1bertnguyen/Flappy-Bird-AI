@@ -8,11 +8,11 @@ import flappy.maths.Vector3f;
 import flappy.level.GameObject;
 public class Pipe implements GameObject{
 
-    public boolean passed = false;
     private Vector3f position = new Vector3f();
 	private Matrix4f ml_matrix;
 	
 	private static float width = 1.5f, height = 8.0f;
+    private static float pairOffset = 11.5f;
 	private static Texture texture;
 	private static VertexArray mesh;
 	
@@ -75,12 +75,20 @@ public class Pipe implements GameObject{
 		return height;
 	}
 
+    public static float getPairOffset() {
+        return pairOffset;
+    }
+
+    public static float getGapSize() {
+        return pairOffset - height;
+    }
+
     public float getTopPipeBottom() {
-        return position.y + 8.0f; // hoặc giá trị thật dựa trên game
+        return position.y;
     }
 
     public float getBottomPipeTop() {
-        return position.y - 8.0f; // tương ứng
+        return position.y - getGapSize();
     }
 
 }

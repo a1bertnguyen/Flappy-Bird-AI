@@ -20,8 +20,8 @@ public class Node {
     public void activate() {
         if (activated) return;
 
-        if (layer == 1) {
-            outputValue = sigmoid(inputValue);  // output node
+        if (layer > 0) {
+            outputValue = sigmoid(inputValue);
         } else {
             outputValue = inputValue;
         }

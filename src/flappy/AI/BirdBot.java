@@ -4,18 +4,24 @@ import flappy.level.background.Level;
 import flappy.level.bird.Bird;
 import flappy.level.pipe.Pipe;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
+
 public class BirdBot {
 
     private Bird bird;
     private Brain brain;
     private float fitness;
-    private float[] vision; // [topDist, pipeDist, bottomDist]
+    private float[] vision; // [topDist, pipeDist, bottomDist, velocity]
+    private Set<Pipe> passedPipes;
 
     public BirdBot() {
         this.bird = new Bird();
-        this.brain = new Brain(3, false);
+        this.brain = new Brain(4, false);
         this.fitness = 0;
-        this.vision = new float[3];
+        this.vision = new float[4];
+        this.passedPipes = Collections.newSetFromMap(new IdentityHashMap<>());
         this.brain.generateNet();
 
         this.bird.setY((float) (Math.random() * 2 - 1)); // random trong [-1, 1]
@@ -39,6 +45,10 @@ public class BirdBot {
     public void look(Level level) {
         Pipe closest = level.getClosestPipe(bird);
         if (closest == null) {
+            vision[0] = 0;
+            vision[1] = 2;
+            vision[2] = 0;
+            vision[3] = clamp(bird.getVelocity() / 0.2f, -1f, 1f);
             return;
         }
 
@@ -51,7 +61,7 @@ public class BirdBot {
         float gapBottom = closest.getBottomPipeTop();   // chỗ đỉnh của ống dưới
 
         // 1) Khoảng cách NGANG tới ống (dương khi ống ở phía trước chim)
-        float rawPipeDist = closest.getX() - birdX;   // Level.getClosestPipe đã đảm bảo > 0
+        float rawPipeDist = level.getPipeScreenX(closest) - birdX;   // Level.getClosestPipe đã đảm bảo > 0
         float pipeDist = rawPipeDist / 10.0f;         // scale nhẹ cho mạng dễ học
 
         // 2) Khoảng cách DỌC tới mép trên khe
@@ -67,13 +77,14 @@ public class BirdBot {
         float bottomDist = rawBottomDist / 5.0f;
 
         // Clamp cho an toàn (giới hạn -2..2 để tránh saturate sigmoid)
-        topDist = Math.max(-2f, Math.min(2f, topDist));
-        bottomDist = Math.max(-2f, Math.min(2f, bottomDist));
-        pipeDist = Math.max(0f, Math.min(2f, pipeDist));
+        topDist = clamp(topDist, -2f, 2f);
+        bottomDist = clamp(bottomDist, -2f, 2f);
+        pipeDist = clamp(pipeDist, 0f, 2f);
 
         vision[0] = topDist;
         vision[1] = pipeDist;
         vision[2] = bottomDist;
+        vision[3] = clamp(bird.getVelocity() / 0.2f, -1f, 1f);
     }
 
     public void think() {
@@ -81,7 +92,7 @@ public class BirdBot {
             return;
         }
         float output = brain.feedForward(vision);
-        if (output > 0.4f) {
+        if (output > 0.5f) {
             bird.jump();
         }
     }
@@ -101,8 +112,14 @@ public class BirdBot {
     }
     private int pipesPassed = 0;
 
-    public void addPipePass() {
-        pipesPassed++;
+    public boolean hasPassedPipe(Pipe pipe) {
+        return passedPipes.contains(pipe);
+    }
+
+    public void addPipePass(Pipe pipe) {
+        if (passedPipes.add(pipe)) {
+            pipesPassed++;
+        }
     }
 
     public int getPipesPassed() {
@@ -123,6 +140,10 @@ public class BirdBot {
         clone.brain = brain.cloneBrain();
         clone.brain.generateNet();
         return clone;
+    }
+
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
     }
 
 }

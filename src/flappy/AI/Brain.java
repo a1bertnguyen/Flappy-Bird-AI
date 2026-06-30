@@ -22,18 +22,18 @@ public class Brain {
             }
 
             // Node bias
-            Node bias = new Node(3);
+            Node bias = new Node(inputs);
             bias.layer = 0;
             nodes.add(bias);
 
             // Node output
-            Node output = new Node(4);
+            Node output = new Node(inputs + 1);
             output.layer = 1;
             nodes.add(output);
 
             // Kết nối input -> output
             Random rand = new Random();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i <= inputs; i++) {
                 connections.add(new Connection(nodes.get(i), output, rand.nextFloat() * 2 - 1));
             }
         }
@@ -68,17 +68,17 @@ public class Brain {
             nodes.get(i).outputValue = vision[i];  // không bắt buộc, nhưng giúp rõ ràng
         }
 
-        // 2. Gán bias = 1 cho node bias (id = 3)
-        nodes.get(3).inputValue = 1f;
-        nodes.get(3).outputValue = 1f;
+        // 2. Gan bias = 1 cho node bias
+        nodes.get(inputs).inputValue = 1f;
+        nodes.get(inputs).outputValue = 1f;
 
         // 3. Kích hoạt lần lượt các node trong mạng
         for (Node n : net) {
             n.activate();
         }
 
-        // 4. Lấy output từ node output (id = 4)
-        float result = nodes.get(4).outputValue;
+        // 4. Lay output tu node output
+        float result = nodes.get(inputs + 1).outputValue;
 
         // 5. Reset inputValue (và có thể cả cờ activated nếu bạn dùng nhiều lần)
         for (Node n : nodes) {
@@ -126,6 +126,8 @@ public class Brain {
         if (Math.random() < 0.15) {
             addHiddenNode();
         }
+
+        generateNet();
     }
 
     private void addHiddenNode() {
@@ -135,15 +137,20 @@ public class Brain {
 
         int newId = nodes.size();
         Node hidden = new Node(newId);
-        hidden.layer = 1; // hidden layer between 0 and 2
+        hidden.layer = 1;
         nodes.add(hidden);
 
-        // Add connections: input0 -> hidden -> output
-        Node input0 = nodes.get(0);
-        Node output = nodes.get(nodes.size() - 2); // last before hidden, but id 4 if no prior
+        Node output = getNode(inputs + 1);
+        if (output == null) {
+            return;
+        }
+        output.layer = 2;
 
-        connections.add(new Connection(input0, hidden, 1.0f));
-        connections.add(new Connection(hidden, output, 1.0f));
+        Random rand = new Random();
+        for (int i = 0; i <= inputs; i++) {
+            connections.add(new Connection(nodes.get(i), hidden, rand.nextFloat() * 2 - 1));
+        }
+        connections.add(new Connection(hidden, output, rand.nextFloat() * 2 - 1));
 
         layers = 3;
     }

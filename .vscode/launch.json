@@ -3,31 +3,22 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Main",
+            "name": "Run Flappy Bird AI",
             "request": "launch",
             "mainClass": "flappy.main.Main",
-            "projectName": "DSAproject"
-        },
-        {
-            "type": "java",
-            "name": "Launch Flappy Bird",
-            "request": "launch",
-            "mainClass": "flappy.main.Main",
-            "projectName": "Flappy-Bird-AI",
             "classPaths": [
-                "bin",
-                "lib/lwjgl.jar",
-                "lib/lwjgl-glfw.jar",
-                "lib/lwjgl-opengl.jar",
-                "lib/lwjgl-natives-windows.jar",
-                "lib/lwjgl-glfw-natives-windows.jar",
-                "lib/lwjgl-opengl-natives-windows.jar"
+                "${workspaceFolder}/bin",
+                "${workspaceFolder}/lib/lwjgl.jar",
+                "${workspaceFolder}/lib/lwjgl-glfw.jar",
+                "${workspaceFolder}/lib/lwjgl-opengl.jar",
+                "${workspaceFolder}/lib/lwjgl-stb.jar",
+                "${workspaceFolder}/lib/lwjgl-natives-windows.jar",
+                "${workspaceFolder}/lib/lwjgl-glfw-natives-windows.jar",
+                "${workspaceFolder}/lib/lwjgl-opengl-natives-windows.jar",
+                "${workspaceFolder}/lib/lwjgl-stb-natives-windows.jar"
             ],
-            "sourcePaths": [
-                "src"
-            ],
-            "vmArgs": "-Djava.library.path=lib",
-            "console": "integratedTerminal"
+            "vmArgs": "--enable-native-access=ALL-UNNAMED",
+            "preLaunchTask": "Compile Flappy Bird"
         }
     ]
 }

@@ -55,6 +55,10 @@ public class Bird implements Updateable {
         return rot;
     }
 
+    public float getVelocity() {
+        return delta;
+    }
+
     public Vector3f getPosition() {
         return position;
     }

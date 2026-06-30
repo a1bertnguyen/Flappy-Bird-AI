@@ -35,7 +35,11 @@ public class Level {
         this.fade = new VertexArray(6);
     }
     public Pipe getClosestPipe(Bird bird) {
-        return pipeManager.getClosestPipe(bird);
+        return pipeManager.getClosestPipe(bird, xScroll);
+    }
+
+    public float getPipeScreenX(Pipe pipe) {
+        return pipeManager.getScreenX(pipe, xScroll);
     }
 
 
@@ -51,7 +55,7 @@ public class Level {
             if (!bot.getBird().isAlive()) continue;
 
             bot.update(this);
-            pipeManager.checkPassed(bot.getBird(), bot);
+            pipeManager.checkPassed(bot.getBird(), bot, xScroll);
 
 
 

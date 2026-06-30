@@ -33,7 +33,8 @@ public class Species {
         for (int i = 0; i < minSize; i++) {
             total += Math.abs(b1.connections.get(i).weight - b2.connections.get(i).weight);
         }
-        return total;
+        total += Math.abs(b1.connections.size() - b2.connections.size());
+        return total / Math.max(b1.connections.size(), b2.connections.size());
     }
 
     public void add(BirdBot player) {
@@ -69,7 +70,8 @@ public class Species {
 
     public BirdBot makeOffspring() {
         Random rand = new Random();
-        BirdBot parent = players.get(rand.nextInt(players.size()));
+        int parentPool = Math.max(1, players.size() / 2);
+        BirdBot parent = players.get(rand.nextInt(parentPool));
         BirdBot baby = parent.clone();
         baby.mutate();
         System.out.println("Make offspring from fitness: " + parent.getFitness());
